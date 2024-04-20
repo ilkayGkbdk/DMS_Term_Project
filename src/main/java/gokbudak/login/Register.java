@@ -189,7 +189,8 @@ public class Register extends JPanel {
         }
 
         if (isError) {
-            JOptionPane.showMessageDialog(panel, label, "HATA", JOptionPane.ERROR_MESSAGE, new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+            JOptionPane.showMessageDialog(panel, label, "HATA", JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
         }
     }
 

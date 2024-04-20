@@ -1,6 +1,7 @@
 package gokbudak.menu;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import gokbudak.database.Query;
 import gokbudak.login.Login;
 import net.miginfocom.swing.MigLayout;
@@ -8,8 +9,9 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.Objects;
 
-public class Panels extends JPanel{
+public class Panels {
 
     private JLabel lbFullName, fullName, lbGender, gender, lbId, id, lbPhone, phone;
     private JLabel lbDistrict, district, lbAddress, address;
@@ -18,7 +20,6 @@ public class Panels extends JPanel{
         PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE, SHOW_ITEMS,
         ADD_ITEMS, QUESTIONS
     }
-    private String currentPanel = " ";
 
     private static Panels instance;
 
@@ -34,76 +35,29 @@ public class Panels extends JPanel{
     public JPanel getPanel(SystemPanel systemPanel) throws SQLException {
         switch (systemPanel){
             case PERSONAL_INFO -> {
-                if (currentPanel.equals(String.valueOf(SystemPanel.PERSONAL_INFO))){
-                    return null;
-                }
-                else {
-                    currentPanel = String.valueOf(SystemPanel.PERSONAL_INFO);
-                    return personalPanel();
-                }
+                return personalPanel();
             }
             case LOGIN_INFO -> {
-                if (currentPanel.equals(String.valueOf(SystemPanel.LOGIN_INFO))){
-                    return null;
-                }
-                else {
-                    currentPanel = String.valueOf(SystemPanel.LOGIN_INFO);
-                    return loginPanel();
-                }
+                return loginPanel();
+
             }
             case BALANCE -> {
-                if (currentPanel.equals(String.valueOf(SystemPanel.BALANCE))){
-                    return null;
-                }
-                else {
-                    currentPanel = String.valueOf(SystemPanel.BALANCE);
-                    return balancePanel();
-                }
+                return balancePanel();
             }
             case SHOW_WAREHOUSE -> {
-                if (currentPanel.equals(String.valueOf(SystemPanel.SHOW_WAREHOUSE))){
-                    return null;
-                }
-                else {
-                    currentPanel = String.valueOf(SystemPanel.SHOW_WAREHOUSE);
-                    return showPanel();
-                }
+                return showPanel();
             }
             case BUY_WAREHOUSE -> {
-                if (currentPanel.equals(String.valueOf(SystemPanel.BUY_WAREHOUSE))){
-                    return null;
-                }
-                else {
-                    currentPanel = String.valueOf(SystemPanel.BUY_WAREHOUSE);
-                    return buyPanel();
-                }
+                return buyPanel();
             }
             case SHOW_ITEMS -> {
-                if (currentPanel.equals(String.valueOf(SystemPanel.SHOW_ITEMS))){
-                    return null;
-                }
-                else {
-                    currentPanel = String.valueOf(SystemPanel.SHOW_ITEMS);
-                    return itemsPanel();
-                }
+                return itemsPanel();
             }
             case ADD_ITEMS -> {
-                if (currentPanel.equals(String.valueOf(SystemPanel.ADD_ITEMS))){
-                    return null;
-                }
-                else {
-                    currentPanel = String.valueOf(SystemPanel.ADD_ITEMS);
-                    return addItemPanel();
-                }
+                return addItemPanel();
             }
             case QUESTIONS -> {
-                if (currentPanel.equals(String.valueOf(SystemPanel.QUESTIONS))){
-                    return null;
-                }
-                else {
-                    currentPanel = String.valueOf(SystemPanel.QUESTIONS);
-                    return questionPanel();
-                }
+                return questionPanel();
             }
         }
         return null;
@@ -141,12 +95,13 @@ public class Panels extends JPanel{
 
     private JPanel loginPanel() {
         //TODO
-        return this;
+        return null;
     }
 
     public JPanel personalPanel() throws SQLException {
 
-        setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
         JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "[fill,360]"));
         nestPanel.putClientProperty(FlatClientProperties.STYLE,
@@ -226,10 +181,10 @@ public class Panels extends JPanel{
             nestPanel2.add(address);
         }
 
-        add(nestPanel);
-        add(nestPanel2);
+        panel.add(nestPanel);
+        panel.add(nestPanel2);
 
-        return this;
+        return panel;
     }
 
     private Component createAddLabel(String str) {
@@ -242,15 +197,58 @@ public class Panels extends JPanel{
         cmdAddPhone.setContentAreaFilled(false);
         cmdAddPhone.setCursor(new Cursor(Cursor.HAND_CURSOR));
         cmdAddPhone.addActionListener(e -> {
+
             if (str.equals("Telefon Ekle")){
-                //TODO
-                JOptionPane.showInputDialog("abbbc");
-                //Query.getInstance().update("loginInfos", "phoneNumber");
+                JLabel label = new JLabel();
+                label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
+                boolean isError = true;
+
+                label.setText("Telefon Numaranı Gir");
+                String phoneNumberWithZero = (String) JOptionPane.showInputDialog(null, label, "Telefon Ekle", JOptionPane.QUESTION_MESSAGE,
+                        new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
+                String phoneNumber = phoneNumberWithZero.startsWith("0") ? phoneNumberWithZero.substring(1):phoneNumberWithZero;
+
+                if (!isLengthOK(phoneNumber)){
+                    label.setText("Telefon 10 Haneli Olmalıdır (0'ı saymadan)");
+                }
+                else if (!isNumeric(phoneNumber)){
+                    label.setText("Telefon Sadece Sayılardan Oluşabilir");
+                }
+                else {
+                    try {
+                        Query.getInstance().update("loginInfos", "phoneNumber", phoneNumber, "user_id", Login.getCurrentUserId());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    label.setText("Telefon Başarıyla Eklendi! Sayfa Kapanınca Güncellenir.");
+                    JOptionPane.showMessageDialog(null, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
+                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
+                    System.out.println(phoneNumber);
+                    isError = false;
+                }
+
+                if (isError){
+                    JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
+                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+                }
+
             }
         });
 
         panel.add(cmdAddPhone);
 
         return panel;
+    }
+
+    private boolean isNumeric(String phone){
+        for (int i = 0; i < 10; i++) {
+            if (!Character.isDigit(phone.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean isLengthOK(String phone){
+        return phone.length() == 10;
     }
 }
