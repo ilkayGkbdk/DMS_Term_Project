@@ -114,8 +114,14 @@ public class Panels {
     private JPanel loginPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
-        JLabel label = new JLabel("loginPanel");
-        panel.add(label);
+
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "[fill,360]"));
+        nestPanel.putClientProperty(FlatClientProperties.STYLE,
+                "arc:20;" +
+                        "[light]background:darken(@background,3%);" +
+                        "[dark]background:lighten(@background,3%)");
+
+
         return panel;
     }
 
