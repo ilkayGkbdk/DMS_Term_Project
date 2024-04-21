@@ -40,24 +40,24 @@ public class FormManager {
         });
     }
 
-    private int i = 0;
     public void showForm(String title, Component component) throws PropertyVetoException {
+        FlatAnimatedLafChange.showSnapshot();
         JInternalFrame[] frames = desktopPane.getAllFrames();
         for (JInternalFrame frame : frames) {
-            frame.dispose(); // İç çerçeveyi kapat
+            frame.dispose();
         }
 
-        // Yeni iç çerçeve oluştur
         JInternalFrame internalFrame = new JInternalFrame(title, false, true, false, false);
         internalFrame.setSize(desktopPane.getSize());
         internalFrame.setMaximum(true);
 
-        internalFrame.add(component); // Verilen bileşeni iç çerçeveye ekle
+        internalFrame.add(component);
         internalFrame.setVisible(true);
 
-        desktopPane.add(internalFrame); // İç çerçeveyi masaüstü paneline ekle
-        desktopPane.moveToFront(internalFrame); // Yeni iç çerçevenin öne gelmesini sağla
+        desktopPane.add(internalFrame);
+        desktopPane.moveToFront(internalFrame);
         internalFrame.setSelected(true);
+        FlatAnimatedLafChange.hideSnapshotWithAnimation();
     }
 
     public void setDesktopPane(JDesktopPane desktopPane){

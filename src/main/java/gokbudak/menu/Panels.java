@@ -111,7 +111,7 @@ public class Panels {
         return panel;
     }
 
-    private JPanel loginPanel() {
+    private JPanel loginPanel() throws SQLException {
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
@@ -121,7 +121,43 @@ public class Panels {
                         "[light]background:darken(@background,3%);" +
                         "[dark]background:lighten(@background,3%)");
 
+        JLabel lbUsername, username, lbEmail, email, lbPassword;
+        JPasswordField txtPassword;
 
+        lbUsername = new JLabel("Kullanıcı Adı");
+        username = new JLabel(Query.getInstance().select("username", "loginInfos", "user_id", Login.getCurrentUserId(), false));
+        lbEmail = new JLabel("E-Mail");
+        email = new JLabel();
+        lbPassword = new JLabel("Şifre");
+
+        lbUsername.putClientProperty(FlatClientProperties.STYLE, "font:bold +3; foreground:#23904AFF");
+        username.putClientProperty(FlatClientProperties.STYLE, "font:italic +4");
+        lbEmail.putClientProperty(FlatClientProperties.STYLE, "font:bold +3; foreground:#23904AFF");
+        email.putClientProperty(FlatClientProperties.STYLE, "font:italic +4");
+        lbPassword.putClientProperty(FlatClientProperties.STYLE, "font:bold +3; foreground:#23904AFF");
+
+        txtPassword = new JPasswordField(Query.getInstance().select("password", "loginInfos", "user_id", Login.getCurrentUserId(), false));
+
+        txtPassword.putClientProperty(FlatClientProperties.STYLE, "showRevealButton:true");
+        txtPassword.setEditable(false);
+        txtPassword.setFocusable(false);
+
+        nestPanel.add(lbUsername, "gapy 8");
+        nestPanel.add(username);
+        nestPanel.add(new JSeparator(), "gapy 5 5");
+        nestPanel.add(lbEmail, "gapy 8");
+        if(Query.getInstance().select("email", "loginInfos", "user_id", Login.getCurrentUserId(), false) == null){
+            nestPanel.add(createAddLabel("Email Ekle"));
+        }
+        else {
+            email.setText(Query.getInstance().select("email", "loginInfos", "user_id", Login.getCurrentUserId(), false));
+            nestPanel.add(email);
+        }
+        nestPanel.add(new JSeparator(), "gapy 5 5");
+        nestPanel.add(lbPassword, "gapy 8");
+        nestPanel.add(txtPassword);
+
+        panel.add(nestPanel);
         return panel;
     }
 
@@ -298,6 +334,9 @@ public class Panels {
                     JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
                             new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
                 }
+            }
+            else if(str.equals("Email Ekle")){
+                //TODO
             }
         });
 
