@@ -115,15 +115,96 @@ public class SystemMenu extends BlurChild {
                 .addMenuEvent(new MenuEvent() {
                     @Override
                     public void selected(MenuAction menuAction, int[] ints) {
-                        System.out.println("Menu Seçildi");
 
-                        if (ints.length == 2){
+                        if (ints.length == 1){
                             int index = ints[0];
-                            if (index == 0){
+
+                            if (index == 1){
                                 try {
-                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.PERSONAL_INFO));
+                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.BALANCE));
                                 } catch (PropertyVetoException | SQLException e) {
                                     throw new RuntimeException(e);
+                                }
+                            }
+                            else if (index == 4) {
+                                try {
+                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.QUESTIONS));
+                                } catch (PropertyVetoException | SQLException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+
+                        }
+                        else if (ints.length == 2){
+                            int index = ints[0];
+                            int subIndex = ints[1];
+
+                            if (index == 0){
+                                if(subIndex == 0){
+                                    try {
+                                        FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.PERSONAL_INFO));
+                                    } catch (PropertyVetoException | SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                else if(subIndex == 1){
+                                    try {
+                                        FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.LOGIN_INFO));
+                                    } catch (PropertyVetoException | SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }
+                            else if (index == 2){
+                                if(subIndex == 0){
+                                    try {
+                                        FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.SHOW_WAREHOUSE));
+                                    } catch (PropertyVetoException | SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                else if(subIndex == 1){
+                                    try {
+                                        FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.BUY_WAREHOUSE));
+                                    } catch (PropertyVetoException | SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }
+                            else if (index == 3){
+                                if(subIndex == 0){
+                                    try {
+                                        FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.SHOW_ITEMS));
+                                    } catch (PropertyVetoException | SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                else if(subIndex == 1){
+                                    try {
+                                        FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.ADD_ITEMS));
+                                    } catch (PropertyVetoException | SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }
+                            if (index == 4){
+                                if(subIndex == 0){
+                                    //TODO
+                                }
+                                else if(subIndex == 1){
+                                    //TODO
+                                }
+                                else if(subIndex == 2){
+                                    //TODO
+                                }
+                                else if(subIndex == 3){
+                                    //TODO
+                                }
+                                else if(subIndex == 4){
+                                    //TODO
+                                }
+                                else if(subIndex == 5){
+                                    //TODO
                                 }
                             }
                         }

@@ -64,38 +64,59 @@ public class Panels {
     }
 
     private JPanel questionPanel() {
-        //TODO
-        return null;
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JLabel label = new JLabel("questionPanel");
+        panel.add(label);
+        return panel;
     }
 
     private JPanel addItemPanel() {
-        //TODO
-        return null;
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JLabel label = new JLabel("addItemPanel");
+        panel.add(label);
+        return panel;
     }
 
     private JPanel itemsPanel() {
-        //TODO
-        return null;
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JLabel label = new JLabel("itemsPanel");
+        panel.add(label);
+        return panel;
     }
 
     private JPanel buyPanel() {
-        //TODO
-        return null;
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JLabel label = new JLabel("buyPanel");
+        panel.add(label);
+        return panel;
     }
 
     private JPanel showPanel() {
-        //TODO
-        return null;
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JLabel label = new JLabel("showPanel");
+        panel.add(label);
+        return panel;
     }
 
     private JPanel balancePanel() {
-        //TODO
-        return null;
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JLabel label = new JLabel("balancePanel");
+        panel.add(label);
+        return panel;
     }
 
     private JPanel loginPanel() {
-        //TODO
-        return null;
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JLabel label = new JLabel("loginPanel");
+        panel.add(label);
+        return panel;
     }
 
     public JPanel personalPanel() throws SQLException {
