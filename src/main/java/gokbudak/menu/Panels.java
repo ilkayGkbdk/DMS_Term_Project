@@ -13,9 +13,6 @@ import java.util.Objects;
 
 public class Panels {
 
-    private JLabel lbFullName, fullName, lbGender, gender, lbId, id, lbPhone, phone;
-    private JLabel lbDistrict, district, lbAddress, address;
-
     public enum SystemPanel {
         PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE, SHOW_ITEMS,
         ADD_ITEMS, QUESTIONS
@@ -178,6 +175,9 @@ public class Panels {
                 "[light]background:darken(@background,3%);" +
                 "[dark]background:lighten(@background,3%)");
 
+        JLabel lbFullName, fullName, lbGender, gender, lbId, id, lbPhone, phone;
+        JLabel lbDistrict, district, lbAddress, address;
+
         lbFullName = new JLabel("İsim Soyisim");
         fullName = new JLabel(Query.getInstance().select("firstName", "users", "user_id", Login.getCurrentUserId(), false) +
                 " " + Query.getInstance().select("lastName", "users", "user_id", Login.getCurrentUserId(), false));
@@ -261,82 +261,79 @@ public class Panels {
         cmdAddPhone.setCursor(new Cursor(Cursor.HAND_CURSOR));
         cmdAddPhone.addActionListener(e -> {
 
-            if (str.equals("Telefon Ekle")){
-                JLabel label = new JLabel();
-                label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
-                boolean isError = true;
+            switch (str) {
+                case "Telefon Ekle" -> {
+                    JLabel label = new JLabel();
+                    label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
+                    boolean isError = true;
 
-                label.setText("Telefon Numaranı Gir");
-                String phoneNumberWithZero = (String) JOptionPane.showInputDialog(null, label, "Telefon Ekle", JOptionPane.QUESTION_MESSAGE,
-                        new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
-                String phoneNumber = phoneNumberWithZero.startsWith("0") ? phoneNumberWithZero.substring(1):phoneNumberWithZero;
-
-                if (!isLength10(phoneNumber)){
-                    label.setText("Telefon 10 Haneli Olmalıdır (0'ı saymadan)");
-                }
-                else if (!isNumeric(phoneNumber)){
-                    label.setText("Telefon Sadece Sayılardan Oluşabilir");
-                }
-                else {
-                    try {
-                        Query.getInstance().update("loginInfos", "phoneNumber", phoneNumber, "user_id", Login.getCurrentUserId());
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    label.setText("Telefon Başarıyla Eklendi! Sayfa Kapanınca Güncellenir.");
-                    JOptionPane.showMessageDialog(null, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
-                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
-                    System.out.println(phoneNumber);
-                    isError = false;
-                }
-
-                if (isError){
-                    JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
-                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
-                }
-            }
-
-            else if(str.equals("Adres Ekle")){
-                JLabel label = new JLabel();
-                label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
-                boolean isError = true;
-
-                label.setText("İlçe Gir");
-                String txtDistrict = (String) JOptionPane.showInputDialog(null, label, "Adres Ekle", JOptionPane.QUESTION_MESSAGE,
-                        new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
-
-                if (!isLetter(txtDistrict)){
-                    label.setText("İlçe Adı Sadece Harflerden Oluşabilir");
-                }
-                else {
-                    label.setText("Konum Gir ('Tahralı Sokak 7A' gibi, MAKS 50 Karakter)");
-                    String location = (String) JOptionPane.showInputDialog(null, label, "Adres Ekle", JOptionPane.QUESTION_MESSAGE,
+                    label.setText("Telefon Numaranı Gir");
+                    String phoneNumberWithZero = (String) JOptionPane.showInputDialog(null, label, "Telefon Ekle", JOptionPane.QUESTION_MESSAGE,
                             new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
+                    String phoneNumber = phoneNumberWithZero.startsWith("0") ? phoneNumberWithZero.substring(1) : phoneNumberWithZero;
 
-                    if (!isLength50(location)){
-                        label.setText("Maksimum 25 Karaktere İzin Verilir");
-                    }
-                    else {
+                    if (!isLength10(phoneNumber)) {
+                        label.setText("Telefon 10 Haneli Olmalıdır (0'ı saymadan)");
+                    } else if (!isNumeric(phoneNumber)) {
+                        label.setText("Telefon Sadece Sayılardan Oluşabilir");
+                    } else {
                         try {
-                            Query.getInstance().update("addresses", "district", txtDistrict, "user_id", Login.getCurrentUserId());
-                            Query.getInstance().update("addresses", "full_address", location, "user_id", Login.getCurrentUserId());
+                            Query.getInstance().update("loginInfos", "phoneNumber", phoneNumber, "user_id", Login.getCurrentUserId());
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
-                        label.setText("Adres Başarıyla Eklendi! Sayfa Kapanınca Güncellenir.");
+                        label.setText("Telefon Başarıyla Eklendi! Sayfa Kapanınca Güncellenir.");
                         JOptionPane.showMessageDialog(null, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
                                 new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
+                        System.out.println(phoneNumber);
                         isError = false;
                     }
-                }
 
-                if (isError){
-                    JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
-                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+                    if (isError) {
+                        JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
+                                new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+                    }
                 }
-            }
-            else if(str.equals("Email Ekle")){
-                //TODO
+                case "Adres Ekle" -> {
+                    JLabel label = new JLabel();
+                    label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
+                    boolean isError = true;
+
+                    label.setText("İlçe Gir");
+                    String txtDistrict = (String) JOptionPane.showInputDialog(null, label, "Adres Ekle", JOptionPane.QUESTION_MESSAGE,
+                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
+
+                    if (!isLetter(txtDistrict)) {
+                        label.setText("İlçe Adı Sadece Harflerden Oluşabilir");
+                    } else {
+                        label.setText("Konum Gir ('Tahralı Sokak 7A' gibi, MAKS 50 Karakter)");
+                        String location = (String) JOptionPane.showInputDialog(null, label, "Adres Ekle", JOptionPane.QUESTION_MESSAGE,
+                                new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
+
+                        if (!isLength50(location)) {
+                            label.setText("Maksimum 25 Karaktere İzin Verilir");
+                        } else {
+                            try {
+                                Query.getInstance().update("addresses", "district", txtDistrict, "user_id", Login.getCurrentUserId());
+                                Query.getInstance().update("addresses", "full_address", location, "user_id", Login.getCurrentUserId());
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            label.setText("Adres Başarıyla Eklendi! Sayfa Kapanınca Güncellenir.");
+                            JOptionPane.showMessageDialog(null, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
+                                    new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
+                            isError = false;
+                        }
+                    }
+
+                    if (isError) {
+                        JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
+                                new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+                    }
+                }
+                case "Email Ekle" -> {
+                    //TODO
+                }
             }
         });
 
