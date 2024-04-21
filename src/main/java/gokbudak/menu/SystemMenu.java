@@ -2,6 +2,7 @@ package gokbudak.menu;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import gokbudak.database.Query;
+import gokbudak.login.Login;
 import gokbudak.manager.FormManager;
 import net.miginfocom.swing.MigLayout;
 import raven.drawer.component.header.SimpleHeader;
@@ -95,7 +96,8 @@ public class SystemMenu extends BlurChild {
                         .subMenu("Nasıl bakiye ekleyebilirim?")
                         .subMenu("Kullanıcı adı ve şifre değiştirebilir miyim?")
                         .subMenu("Depoyu nasıl satabilirim?")
-                        .subMenu("Hesabımı nasıl kapatabilirim?")
+                        .subMenu("Hesabımı nasıl kapatabilirim?"),
+                new Item("ÇIKIŞ", "logout.svg")
         };
         return new SimpleMenuOption()
                 .setBaseIconPath("gokbudak/icons")
@@ -132,6 +134,9 @@ public class SystemMenu extends BlurChild {
                                 } catch (PropertyVetoException | SQLException e) {
                                     throw new RuntimeException(e);
                                 }
+                            }
+                            else if (index == 5){
+                                FormManager.getInstance().showForm(new Login());
                             }
 
                         }

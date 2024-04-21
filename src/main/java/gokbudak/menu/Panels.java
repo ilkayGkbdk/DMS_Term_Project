@@ -332,7 +332,57 @@ public class Panels {
                     }
                 }
                 case "Email Ekle" -> {
-                    //TODO
+                    JLabel label = new JLabel();
+                    label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
+                    boolean isError = true;
+
+                    label.setText("E-Mail Gir (Sadece @ Kısmından Öncesi)");
+                    String mail = (String) JOptionPane.showInputDialog(null, label, "E-Mail Ekle", JOptionPane.QUESTION_MESSAGE,
+                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
+
+                    if(!checkMail(mail)){
+                        label.setText("Geçersiz E-Mail ('@', '.', yada Mail İmzası Kullanma)");
+                    }
+                    else if(mail.length() < 3){
+                        label.setText("Geçersiz E-Mail (En Az 3 Karakter)");
+                    }
+                    else {
+                        label.setText("Mail İmzası Seç");
+                        int choose = JOptionPane.showOptionDialog(
+                                null,
+                                label,
+                                "İmza Seç",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/choose.png"))),
+                                new Object[]{"gmail.com", "@hotmail.com"},
+                                null);
+
+                        if (choose == JOptionPane.YES_OPTION){
+                            mail += "@gmail.com";
+                            isError = false;
+                        }
+                        else if (choose == JOptionPane.NO_OPTION){
+                            mail += "@hotmail.com";
+                            isError = false;
+                        }
+
+                    }
+
+                    if (isError){
+                        JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
+                                new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+                    }
+                    else {
+                        try {
+                            Query.getInstance().update("loginInfos", "email", mail, "user_id", Login.getCurrentUserId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        label.setText("E-Mail Başarıyla Eklendi! Sayfa Kapanınca Güncellenir.");
+                        JOptionPane.showMessageDialog(null, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
+                                new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
+                    }
                 }
             }
         });
@@ -361,5 +411,10 @@ public class Panels {
 
     private boolean isLetter(String str){
         return str.matches("[a-zA-ZçÇğĞıİöÖşŞüÜ ]+");
+    }
+
+    private boolean checkMail(String email) {
+        return !email.contains("@") && !email.contains("hotmail") && !email.contains("gmail") &&
+                !email.contains(".");
     }
 }
