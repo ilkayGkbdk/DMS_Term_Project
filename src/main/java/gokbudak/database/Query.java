@@ -1,13 +1,14 @@
 package gokbudak.database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Query {
 
     private static Query instance;
+
+    public enum DataType {
+        STRING, INTEGER, FLOAT, DATE, TIME
+    }
 
     public static Query getInstance(){
         if (instance == null){
@@ -83,7 +84,7 @@ public class Query {
         }
     }
 
-    public void update(String update, String set, String setValue, String whereKey, String whereValue) throws SQLException{
+    public void update(String update, String set, String setValue, String whereKey, String whereValue, DataType dt) throws SQLException{
         Connection connection = null;
         PreparedStatement ps = null;
 
@@ -92,7 +93,22 @@ public class Query {
             ps = connection.prepareStatement("UPDATE " + update +
                                                 " SET " + set + " = ?" +
                                                 " WHERE " + whereKey + " = ?");
-            ps.setString(1, setValue);
+            if(dt == DataType.STRING){
+                ps.setString(1, setValue);
+            }
+            else if (dt == DataType.INTEGER){
+                ps.setInt(1, Integer.parseInt(setValue));
+            }
+            else if (dt.equals(DataType.FLOAT)){
+                ps.setFloat(1, Float.parseFloat(setValue));
+            }
+            else if (dt.equals(DataType.DATE)){
+                ps.setString(1, getDate());
+            }
+            else if (dt.equals(DataType.TIME)){
+                ps.setString(1, getTime());
+            }
+
             ps.setString(2, whereValue);
             ps.execute();
         }
@@ -204,4 +220,100 @@ public class Query {
             return text;
         }
     }
+
+    public String select(String select, String from, String where, DataType dt) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String txt = "", date = "", time = "";
+        int iNumber = 0;
+        float fNumber = 0;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select + " FROM " + from +
+                    " WHERE user_id = ?");
+            ps.setString(1, where);
+            rs = ps.executeQuery();
+            rs.next();
+
+            if(dt == DataType.STRING){
+                txt = rs.getString(1);
+            }
+            else if (dt == DataType.INTEGER){
+                iNumber = rs.getInt(1);
+            }
+            else if (dt.equals(DataType.FLOAT)){
+                fNumber = rs.getFloat(1);
+            }
+            else if (dt.equals(DataType.DATE)){
+                date = String.valueOf(rs.getDate(1));
+            }
+            else if (dt.equals(DataType.TIME)){
+                time = String.valueOf(rs.getTime(1));
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        if(dt == DataType.STRING){
+            return txt;
+        }
+        else if (dt == DataType.INTEGER){
+            return Integer.toString(iNumber);
+        }
+        else if (dt.equals(DataType.FLOAT)){
+            return Float.toString(fNumber);
+        }
+        else if (dt.equals(DataType.DATE)){
+            return date;
+        }
+        else if (dt.equals(DataType.TIME)){
+            return time;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public String getDate() throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String date;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT SWITCHOFFSET(SYSDATETIMEOFFSET(),'+03:00')");
+            rs = ps.executeQuery();
+            rs.next();
+            date = rs.getString(1);
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+        return date;
+    }
+
+    public String getTime() throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String time;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT CONVERT(VARCHAR(5),SWITCHOFFSET(SYSDATETIMEOFFSET(),'+03:00'),108)");
+            rs = ps.executeQuery();
+            rs.next();
+            time = rs.getString(1);
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+        return time;
+    }
+
 }
