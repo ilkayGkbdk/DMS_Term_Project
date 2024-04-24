@@ -65,9 +65,9 @@ public class SystemMenu extends BlurChild {
     }
 
     private SimpleHeaderData getHeaderData(String username) throws SQLException {
-        String user_id = Query.getInstance().select("user_id", "loginInfos", "username", username, true);
-        String fullName = Query.getInstance().select("firstName", "users", "user_id", user_id, false);
-        fullName = fullName + " " + Query.getInstance().select("lastName", "users", "user_id", user_id, false);
+        String user_id = Query.getInstance().select("user_id", "loginInfos", "username", username, Query.DataType.INTEGER);
+        String fullName = Query.getInstance().select("firstName", "users", "user_id", user_id, Query.DataType.STRING);
+        fullName = fullName + " " + Query.getInstance().select("lastName", "users", "user_id", user_id, Query.DataType.STRING);
 
         return new SimpleHeaderData()
                 .setTitle(username)

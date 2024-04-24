@@ -112,7 +112,7 @@ public class Panels {
                         "[dark]background:lighten(@background,3%)");
 
         JLabel lbBalance = new JLabel("Bakiye");
-        String exBalance = Query.getInstance().select("current_balance", "balances", Login.getCurrentUserId(), Query.DataType.FLOAT);
+        String exBalance = Query.getInstance().select("current_balance", "balances", "user_id", Login.getCurrentUserId(), Query.DataType.FLOAT);
         JLabel balance = new JLabel(exBalance + " ₺");
         JButton cmdAddBalance = new JButton("Bakiye Ekle");
         JButton cmdWithdrawBalance = new JButton("Bakiye Çek");
@@ -224,7 +224,7 @@ public class Panels {
         JPasswordField txtPassword;
 
         lbUsername = new JLabel("Kullanıcı Adı");
-        username = new JLabel(Query.getInstance().select("username", "loginInfos", "user_id", Login.getCurrentUserId(), false));
+        username = new JLabel(Query.getInstance().select("username", "loginInfos", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
         lbEmail = new JLabel("E-Mail");
         email = new JLabel();
         lbPassword = new JLabel("Şifre");
@@ -235,7 +235,7 @@ public class Panels {
         email.putClientProperty(FlatClientProperties.STYLE, "font:italic +4");
         lbPassword.putClientProperty(FlatClientProperties.STYLE, "font:bold +3; foreground:#23904AFF");
 
-        txtPassword = new JPasswordField(Query.getInstance().select("password", "loginInfos", "user_id", Login.getCurrentUserId(), false));
+        txtPassword = new JPasswordField(Query.getInstance().select("password", "loginInfos", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
 
         txtPassword.putClientProperty(FlatClientProperties.STYLE, "showRevealButton:true");
         txtPassword.setEditable(false);
@@ -245,11 +245,11 @@ public class Panels {
         nestPanel.add(username);
         nestPanel.add(new JSeparator(), "gapy 5 5");
         nestPanel.add(lbEmail, "gapy 8");
-        if(Query.getInstance().select("email", "loginInfos", "user_id", Login.getCurrentUserId(), false) == null){
+        if(Query.getInstance().select("email", "loginInfos", "user_id", Login.getCurrentUserId(), Query.DataType.STRING) == null){
             nestPanel.add(createAddLabel("Email Ekle"));
         }
         else {
-            email.setText(Query.getInstance().select("email", "loginInfos", "user_id", Login.getCurrentUserId(), false));
+            email.setText(Query.getInstance().select("email", "loginInfos", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
             nestPanel.add(email);
         }
         nestPanel.add(new JSeparator(), "gapy 5 5");
@@ -281,12 +281,12 @@ public class Panels {
         JLabel lbDistrict, district, lbAddress, address;
 
         lbFullName = new JLabel("İsim Soyisim");
-        fullName = new JLabel(Query.getInstance().select("firstName", "users", "user_id", Login.getCurrentUserId(), false) +
-                " " + Query.getInstance().select("lastName", "users", "user_id", Login.getCurrentUserId(), false));
+        fullName = new JLabel(Query.getInstance().select("firstName", "users", "user_id", Login.getCurrentUserId(), Query.DataType.STRING) +
+                " " + Query.getInstance().select("lastName", "users", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
         lbGender = new JLabel("Cinsiyet");
-        gender = new JLabel(Query.getInstance().select("gender", "users", "user_id", Login.getCurrentUserId(), false));
+        gender = new JLabel(Query.getInstance().select("gender", "users", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
         lbId = new JLabel("TC");
-        id = new JLabel(Query.getInstance().select("TCNumber", "users", "user_id", Login.getCurrentUserId(), false));
+        id = new JLabel(Query.getInstance().select("TCNumber", "users", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
         lbPhone = new JLabel("Telefon");
         phone = new JLabel();
 
@@ -309,15 +309,15 @@ public class Panels {
         nestPanel.add(id);
         nestPanel.add(new JSeparator(), "gapy 5 5");
         nestPanel.add(lbPhone, "gapy 8");
-        if(Query.getInstance().select("phoneNumber", "loginInfos", "user_id", Login.getCurrentUserId(), false) == null){
+        if(Query.getInstance().select("phoneNumber", "loginInfos", "user_id", Login.getCurrentUserId(), Query.DataType.STRING) == null){
             nestPanel.add(createAddLabel("Telefon Ekle"));
         }
         else {
-            phone.setText(Query.getInstance().select("phoneNumber", "loginInfos", "user_id", Login.getCurrentUserId(), false));
+            phone.setText(Query.getInstance().select("phoneNumber", "loginInfos", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
             nestPanel.add(phone);
         }
 
-        if (Query.getInstance().select("district", "addresses", "user_id", Login.getCurrentUserId(), false) == null){
+        if (Query.getInstance().select("district", "addresses", "user_id", Login.getCurrentUserId(), Query.DataType.STRING) == null){
             nestPanel2.add(createAddLabel("Adres Ekle"));
         }
         else {
@@ -328,9 +328,9 @@ public class Panels {
             title.add(tit);
 
             lbDistrict = new JLabel("İlçe");
-            district = new JLabel(Query.getInstance().select("district", "addresses", "user_id", Login.getCurrentUserId(), false));
+            district = new JLabel(Query.getInstance().select("district", "addresses", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
             lbAddress = new JLabel("Konum");
-            address = new JLabel(Query.getInstance().select("full_address", "addresses", "user_id", Login.getCurrentUserId(), false));
+            address = new JLabel(Query.getInstance().select("full_address", "addresses", "user_id", Login.getCurrentUserId(), Query.DataType.STRING));
 
             lbDistrict.putClientProperty(FlatClientProperties.STYLE, "font:bold +3; foreground:#23904AFF");
             district.putClientProperty(FlatClientProperties.STYLE, "font:italic +4");
@@ -509,10 +509,6 @@ public class Panels {
             }
         }
         return true;
-    }
-
-    private boolean isFloat(String txt){
-        return false;
     }
 
     private boolean isLength10(String phone){

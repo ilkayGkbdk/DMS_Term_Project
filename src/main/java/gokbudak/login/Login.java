@@ -137,14 +137,14 @@ public class Login extends JPanel{
         }
         else {
             try {
-                if (!Query.getInstance().isHave("username", "loginInfos", username, false)){
+                if (!Query.getInstance().isHave("username", "loginInfos", username, Query.DataType.STRING)){
                     label.setText("Kullanıcı adı yanlış");
                 }
-                else if (!Query.getInstance().select("loginInfos", "username", username).equals(password)){
+                else if (!Query.getInstance().select("*", "loginInfos", "username", username, Query.DataType.STRING).equals(password)){
                     label.setText("Şifre yanlış");
                 }
                 else {
-                    currentUserId = Query.getInstance().select("user_id", "loginInfos", "username", username, true);
+                    currentUserId = Query.getInstance().select("user_id", "loginInfos", "username", username, Query.DataType.INTEGER);
                     FormManager.getInstance().showForm(new Menu(username));
                     isError = false;
                 }

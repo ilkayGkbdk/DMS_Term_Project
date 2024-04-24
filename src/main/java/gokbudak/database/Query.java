@@ -40,34 +40,12 @@ public class Query {
         }
     }
 
-    public void insert(int address_id, int user_id, String district, String full_address) throws SQLException {
-        Connection connection = null;
-        PreparedStatement ps = null;
-
-        try {
-            connection = MSSQLConnection.getInstance().createConnection();
-            ps = connection.prepareStatement(
-                    "INSERT INTO addresses (address_id, user_id, district, full_address) " +
-                            "VALUES (?,?,?,?)");
-
-            ps.setInt(1, address_id);
-            ps.setInt(2, user_id);
-            ps.setString(3, district);
-            ps.setString(4, full_address);
-
-            ps.execute();
-        }
-        finally {
-            MSSQLConnection.getInstance().close(connection, ps);
-        }
-    }
-
     //insert for loginInfos table
     public void insert(String username, String password, String TCNumber) throws SQLException{
         Connection connection = null;
         PreparedStatement ps = null;
 
-        String txtUser_id = select("user_id", "users", "TCNumber", TCNumber, true);
+        String txtUser_id = select("user_id", "users", "TCNumber", TCNumber, DataType.INTEGER);
         int user_id = Integer.parseInt(txtUser_id);
 
         try {
@@ -132,29 +110,7 @@ public class Query {
         }
     }
 
-    public String select(String from, String whereKey, String whereValue) throws SQLException{
-        Connection connection = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        String password;
-
-        try {
-            connection = MSSQLConnection.getInstance().createConnection();
-            ps = connection.prepareStatement("SELECT * FROM " + from + " WHERE " +
-                    whereKey + " = ?");
-            ps.setString(1, whereValue);
-            rs = ps.executeQuery();
-            rs.next();
-            password = rs.getString("password");
-        }
-        finally {
-            MSSQLConnection.getInstance().close(connection, ps, rs);
-        }
-
-        return password;
-    }
-
-    public boolean isHave(String select, String from, String value, boolean isInt) throws SQLException{
+    public boolean isHave(String select, String from, String value, DataType dt) throws SQLException{
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -167,13 +123,23 @@ public class Query {
             rs = ps.executeQuery();
 
             while(rs.next()){
-                if (!isInt) {
+                if (dt.equals(DataType.STRING)) {
                     if (rs.getString(1).equals(value)) {
                         have = true;
                     }
                 }
-                else {
+                else if (dt.equals(DataType.INTEGER)) {
                     if (rs.getInt(1) == Integer.parseInt(value)){
+                        have = true;
+                    }
+                }
+                else if(dt.equals(DataType.FLOAT)) {
+                    if (rs.getFloat(1) == Float.parseFloat(value)){
+                        have = true;
+                    }
+                }
+                else if(dt.equals(DataType.DATE) || dt.equals(DataType.TIME)){
+                    if (rs.getString(1).equals(value)){
                         have = true;
                     }
                 }
@@ -186,42 +152,8 @@ public class Query {
         return have;
     }
 
-    public String select(String select, String from, String whereKey, String whereValue, boolean isInt) throws SQLException{
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        String text = null;
-        int numeric = 0;
-
-        try {
-            con = MSSQLConnection.getInstance().createConnection();
-            ps = con.prepareStatement("SELECT " + select + " FROM " + from + " WHERE " +
-                    whereKey + " = ?");
-            ps.setString(1, whereValue);
-            rs = ps.executeQuery();
-            rs.next();
-
-            if (isInt){
-                numeric = rs.getInt(1);
-            }
-            else {
-                text = rs.getString(1);
-            }
-        }
-        finally {
-            MSSQLConnection.getInstance().close(con, ps, rs);
-        }
-
-        if (isInt){
-            return Integer.toString(numeric);
-        }
-        else {
-            return text;
-        }
-    }
-
-    public String select(String select, String from, String where, DataType dt) throws SQLException {
+    //select xx from xx where xx = xx
+    public String select(String select, String from, String whereKey, String whereValue, DataType dt) throws SQLException {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -233,8 +165,8 @@ public class Query {
         try {
             con = MSSQLConnection.getInstance().createConnection();
             ps = con.prepareStatement("SELECT " + select + " FROM " + from +
-                    " WHERE user_id = ?");
-            ps.setString(1, where);
+                    " WHERE " + whereKey +" = ?");
+            ps.setString(1, whereValue);
             rs = ps.executeQuery();
             rs.next();
 
@@ -315,5 +247,4 @@ public class Query {
         }
         return time;
     }
-
 }
