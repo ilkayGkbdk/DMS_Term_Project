@@ -9,7 +9,6 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.Objects;
 
 public class Panels {
@@ -142,7 +141,7 @@ public class Panels {
             String strBalance = (String) JOptionPane.showInputDialog(null, label, "Bakiye Ekle", JOptionPane.QUESTION_MESSAGE,
                     new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
 
-            if(!isNumericF(strBalance)){
+            if(isNumericF(strBalance)){
                 label.setText("Sadece Sayı Girişi Yazın");
             }
             else if (!checkFloat(strBalance)){
@@ -180,6 +179,54 @@ public class Panels {
 
         });
 
+        cmdWithdrawBalance.addActionListener(e -> {
+            JLabel label = new JLabel();
+            label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
+            boolean isError = true;
+
+            label.setText("Çekilecek Bakiyeyi Gir");
+            String strBalance = (String) JOptionPane.showInputDialog(null, label, "Bakiye Çek", JOptionPane.QUESTION_MESSAGE,
+                    new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/enter.png"))), null, null);
+
+            if(isNumericF(strBalance)){
+                label.setText("Sadece Sayı Girişi Yazın");
+            }
+            else if (!checkFloat(strBalance)){
+                label.setText("En Fazla 99,999.9 ₺ Çekilebilir");
+            }
+            else if(Float.parseFloat(strBalance) > Float.parseFloat(exBalance)){
+                label.setText("Mevcut Bakiyeden Fazla Çekilemez");
+            }
+            else {
+                float newBalance = Float.parseFloat(strBalance);
+                float exBlc = Float.parseFloat(exBalance);
+                newBalance = exBlc - newBalance;
+
+                String execBalance = String.valueOf(newBalance);
+                String oldBalance = String.valueOf(exBlc);
+
+
+                try {
+                    Query.getInstance().update("balances", "current_balance", execBalance, "user_id", Login.getCurrentUserId(), Query.DataType.FLOAT);
+                    Query.getInstance().update("balances", "old_balance", oldBalance, "user_id", Login.getCurrentUserId(), Query.DataType.FLOAT);
+                    Query.getInstance().update("balances", "change_date", "date", "user_id", Login.getCurrentUserId(), Query.DataType.DATE);
+                    Query.getInstance().update("balances", "change_time", "time", "user_id", Login.getCurrentUserId(), Query.DataType.TIME);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                label.setText(strBalance + " ₺ Başarıyla Çekildi! Sayfa Kapanınca Güncellenir.");
+                JOptionPane.showMessageDialog(null, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
+                        new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
+                isError = false;
+            }
+
+            if(isError){
+                JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
+                        new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+            }
+        });
+
         nestPanel.add(lbBalance, "gapy 8");
         nestPanel.add(balance);
         nestPanel.add(new JSeparator(), "gapy 5 5");
@@ -199,15 +246,7 @@ public class Panels {
 
         String beforeDot = str.substring(0, dotIndex);
 
-        if (beforeDot.length() <= 5) {
-            float floatValue = Float.parseFloat(str);
-            System.out.println("Girilen float değeri: " + floatValue);
-            return true;
-        }
-        else {
-            System.out.println("Noktadan önce en fazla 5 haneli olmalıdır.");
-            return false;
-        }
+        return beforeDot.length() <= 5;
     }
 
     private JPanel loginPanel() throws SQLException {
@@ -505,10 +544,10 @@ public class Panels {
     private boolean isNumericF(String text){
         for (char c : text.toCharArray()) {
             if (!Character.isDigit(c) && c != '.') {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     private boolean isLength10(String phone){
