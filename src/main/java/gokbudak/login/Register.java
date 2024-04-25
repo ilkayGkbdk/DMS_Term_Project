@@ -148,7 +148,7 @@ public class Register extends JPanel {
 
         String firstName = txtFirstName.getText();
         String lastName = txtSurName.getText();
-        String id = txtID.getText();
+        String TC = txtID.getText();
         String gender = getGender();
         String username = txtUsername.getText();
         String password = new String(txtPassword.getPassword());
@@ -157,7 +157,7 @@ public class Register extends JPanel {
         if (firstName.isEmpty() || lastName.isEmpty()){
             label.setText("İsim veya Soyisim Eksik");
         }
-        else if (id.isEmpty()){
+        else if (TC.isEmpty()){
             label.setText("TC Kimlik Numarası Eksik");
         }
         else if (username.isEmpty() || password.isEmpty() || rePassword.isEmpty()){
@@ -174,8 +174,14 @@ public class Register extends JPanel {
         }
         else {
             try {
-                Query.getInstance().insert(firstName, lastName, gender, id);
-                Query.getInstance().insert(username, password, id);
+                int id = Integer.parseInt(Query.getInstance().select("user_id", "users", "user_id", Query.OrderType.DESC, Query.DataType.INTEGER));
+                id++;
+                String last_id = String.valueOf(id);
+
+                Query.getInstance().insert(last_id, firstName, lastName, gender, TC);
+                Query.getInstance().insert(username, password, TC);
+                Query.getInstance().insert(last_id, last_id);
+                Query.getInstance().insert(last_id, last_id, 0);
 
                 label.setText("Giriş Yapabilirsiniz");
                 JOptionPane.showMessageDialog(panel, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,

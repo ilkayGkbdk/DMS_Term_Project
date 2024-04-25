@@ -10,6 +10,10 @@ public class Query {
         STRING, INTEGER, FLOAT, DATE, TIME
     }
 
+    public enum OrderType {
+        ASC, DESC
+    }
+
     public static Query getInstance(){
         if (instance == null){
             instance = new Query();
@@ -18,20 +22,21 @@ public class Query {
     }
 
     //insert for users table
-    public void insert(String firstName, String lastName, String gender, String TCNumber) throws SQLException {
+    public void insert(String user_id, String firstName, String lastName, String gender, String TCNumber) throws SQLException {
         Connection connection = null;
         PreparedStatement ps = null;
 
         try {
             connection = MSSQLConnection.getInstance().createConnection();
             ps = connection.prepareStatement(
-                    "INSERT INTO users (firstName, lastName, gender, TCNumber) " +
-                        "VALUES (?,?,?,?)");
+                    "INSERT INTO users (user_id, firstName, lastName, gender, TCNumber) " +
+                        "VALUES (?,?,?,?,?)");
 
-            ps.setString(1, firstName);
-            ps.setString(2, lastName);
-            ps.setString(3, gender);
-            ps.setString(4, TCNumber);
+            ps.setInt(1, Integer.parseInt(user_id));
+            ps.setString(2, firstName);
+            ps.setString(3, lastName);
+            ps.setString(4, gender);
+            ps.setString(5, TCNumber);
 
             ps.execute();
         }
@@ -55,6 +60,49 @@ public class Query {
             ps.setInt(1, user_id);
             ps.setString(2, username);
             ps.setString(3, password);
+            ps.execute();
+        }
+        finally {
+            MSSQLConnection.getInstance().close(connection, ps);
+        }
+    }
+
+    //insert for addresses table
+    public void insert(String address_id, String user_id) throws SQLException {
+        Connection connection = null;
+        PreparedStatement ps = null;
+
+        try {
+            connection = MSSQLConnection.getInstance().createConnection();
+            ps = connection.prepareStatement(
+                    "INSERT INTO addresses (address_id, user_id) " +
+                            "VALUES (?,?)");
+
+            ps.setInt(1, Integer.parseInt(address_id));
+            ps.setInt(2, Integer.parseInt(user_id));
+
+            ps.execute();
+        }
+        finally {
+            MSSQLConnection.getInstance().close(connection, ps);
+        }
+    }
+
+    //insert for balances table
+    public void insert(String balance_id, String user_id, float current_balance) throws SQLException {
+        Connection connection = null;
+        PreparedStatement ps = null;
+
+        try {
+            connection = MSSQLConnection.getInstance().createConnection();
+            ps = connection.prepareStatement(
+                    "INSERT INTO balances (balance_id, user_id, current_balance) " +
+                            "VALUES (?,?,?)");
+
+            ps.setInt(1, Integer.parseInt(balance_id));
+            ps.setInt(2, Integer.parseInt(user_id));
+            ps.setFloat(3, current_balance);
+
             ps.execute();
         }
         finally {
@@ -167,6 +215,70 @@ public class Query {
             ps = con.prepareStatement("SELECT " + select + " FROM " + from +
                     " WHERE " + whereKey +" = ?");
             ps.setString(1, whereValue);
+            rs = ps.executeQuery();
+            rs.next();
+
+            if(dt == DataType.STRING){
+                txt = rs.getString(1);
+            }
+            else if (dt == DataType.INTEGER){
+                iNumber = rs.getInt(1);
+            }
+            else if (dt.equals(DataType.FLOAT)){
+                fNumber = rs.getFloat(1);
+            }
+            else if (dt.equals(DataType.DATE)){
+                date = String.valueOf(rs.getDate(1));
+            }
+            else if (dt.equals(DataType.TIME)){
+                time = String.valueOf(rs.getTime(1));
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        if(dt == DataType.STRING){
+            return txt;
+        }
+        else if (dt == DataType.INTEGER){
+            return Integer.toString(iNumber);
+        }
+        else if (dt.equals(DataType.FLOAT)){
+            return Float.toString(fNumber);
+        }
+        else if (dt.equals(DataType.DATE)){
+            return date;
+        }
+        else if (dt.equals(DataType.TIME)){
+            return time;
+        }
+        else {
+            return null;
+        }
+    }
+
+    //select xx from xx order by xx ASC|DESC
+    public String select(String select, String from, String orderBy, OrderType oT, DataType dt) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String txt = "", date = "", time = "", orderType = "";
+        int iNumber = 0;
+        float fNumber = 0;
+
+        if(oT.equals(OrderType.ASC)){
+            orderType = "ASC";
+        }
+        else if(oT.equals(OrderType.DESC)){
+            orderType = "DESC";
+        }
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select + " FROM " + from +
+                    " ORDER BY " + orderBy + " " + orderType);
             rs = ps.executeQuery();
             rs.next();
 
