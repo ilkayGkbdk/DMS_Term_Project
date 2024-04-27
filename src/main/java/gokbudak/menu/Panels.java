@@ -87,11 +87,20 @@ public class Panels {
         return panel;
     }
 
-    private JPanel buyPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+    private JPanel buyPanel() throws SQLException {
+        JPanel panel = new JPanel(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "[fill,360]"));
+        nestPanel.putClientProperty(FlatClientProperties.STYLE,
+                "arc:20;" +
+                "[light]background:darken(@background,3%);" +
+                "[dark]background:lighten(@background,3%)");
 
+        JLabel lbBalance = new JLabel("Bakiye");
+        JLabel balance = new JLabel(Query.getInstance().select("current_balance", "balances", "user_id", Login.getCurrentUserId(), Query.DataType.FLOAT) + " ₺");
+
+        lbBalance.putClientProperty(FlatClientProperties.STYLE, "font:bold +3; foreground:#23904AFF");
+        balance.putClientProperty(FlatClientProperties.STYLE, "font:italic +4");
 
         return panel;
     }
@@ -176,14 +185,13 @@ public class Panels {
     }
 
     private JPanel balancePanel() throws SQLException {
-        JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+        JPanel panel = new JPanel(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
         JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "[fill,360]"));
         nestPanel.putClientProperty(FlatClientProperties.STYLE,
                 "arc:20;" +
-                        "[light]background:darken(@background,3%);" +
-                        "[dark]background:lighten(@background,3%)");
+                "[light]background:darken(@background,3%);" +
+                "[dark]background:lighten(@background,3%)");
 
         JLabel lbBalance = new JLabel("Bakiye");
         String exBalance = Query.getInstance().select("current_balance", "balances", "user_id", Login.getCurrentUserId(), Query.DataType.FLOAT);
@@ -331,8 +339,8 @@ public class Panels {
         JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "[fill,360]"));
         nestPanel.putClientProperty(FlatClientProperties.STYLE,
                 "arc:20;" +
-                        "[light]background:darken(@background,3%);" +
-                        "[dark]background:lighten(@background,3%)");
+                "[light]background:darken(@background,3%);" +
+                "[dark]background:lighten(@background,3%)");
 
         JLabel lbUsername, username, lbEmail, email, lbPassword;
         JPasswordField txtPassword;
