@@ -90,8 +90,9 @@ public class Panels {
     private JPanel buyPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
-        JLabel label = new JLabel("buyPanel");
-        panel.add(label);
+
+
+
         return panel;
     }
 
@@ -139,8 +140,8 @@ public class Panels {
         table.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE, ""
-                + "hoverTrackColor:null");
+        scrollPane.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE,
+                "hoverTrackColor:null");
 
         return scrollPane;
     }
@@ -158,7 +159,6 @@ public class Panels {
     }
 
     private static DefaultTableModel getDefaultTableModel() throws SQLException {
-        JLabel label = new JLabel("VERİ");
 
         ArrayList<Object[]> dataList = Query.getInstance().getDataFromDatabase("p.name, p.size, o.saleDate, o.deliveryDate, o.situation",
                 "products p", "orders o", "p.product_id", "o.product_id",
