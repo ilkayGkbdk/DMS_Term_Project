@@ -1,6 +1,7 @@
 package gokbudak.database;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Query {
 
@@ -158,7 +159,7 @@ public class Query {
         }
     }
 
-    public boolean isHave(String select, String from, String whereKey, String value, DataType dt) throws SQLException{
+    public boolean isHave(String select, String from, String whereKey, String whereValue, String extra, String value, DataType dt) throws SQLException{
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -168,8 +169,8 @@ public class Query {
         try {
             connection = MSSQLConnection.getInstance().createConnection();
             ps = connection.prepareStatement("SELECT " + select + " FROM " + from + " WHERE " +
-                    whereKey + " = ?");
-            ps.setString(1, value);
+                    whereKey + " = ? " + extra);
+            ps.setString(1, whereValue);
             rs = ps.executeQuery();
 
             while(rs.next()){
@@ -322,6 +323,40 @@ public class Query {
         else {
             return null;
         }
+    }
+
+    public ArrayList<Object[]> getDataFromDatabase(String select, String from, String join, String onLeft, String onRight, String whereV, String whereK) throws SQLException {
+        ArrayList<Object[]> dataList = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select +
+                    " FROM " + from +
+                    " JOIN " + join +
+                    " ON "  + onLeft + " = " + onRight +
+                    " WHERE " + whereV + " = ?");
+            ps.setString(1, whereK);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                String size = rs.getString("size");
+                String situation = rs.getString("situation");
+                String saleDate = rs.getString("saleDate");
+                String deliveryDate = rs.getString("deliveryDate");
+
+                Object[] row = {name, size, situation, saleDate, deliveryDate};
+                dataList.add(row);
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        return dataList;
     }
 
     public String getDate() throws SQLException {
