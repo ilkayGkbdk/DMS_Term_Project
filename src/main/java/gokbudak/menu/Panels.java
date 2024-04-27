@@ -95,8 +95,17 @@ public class Panels {
     private JPanel showPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
-        JLabel label = new JLabel("showPanel");
-        panel.add(label);
+
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "[fill,360]"));
+        nestPanel.putClientProperty(FlatClientProperties.STYLE,
+                "arc:20;" +
+                "[light]background:darken(@background,3%);" +
+                "[dark]background:lighten(@background,3%)");
+
+
+
+
+        panel.add(nestPanel);
         return panel;
     }
 
@@ -144,7 +153,7 @@ public class Panels {
             if(isNumericF(strBalance)){
                 label.setText("Sadece Sayı Girişi Yazın");
             }
-            else if (!checkFloat(strBalance)){
+            else if (checkFloat(strBalance)){
                 label.setText("En Fazla 99,999.9 ₺ Eklenebilir");
             }
             else {
@@ -191,7 +200,7 @@ public class Panels {
             if(isNumericF(strBalance)){
                 label.setText("Sadece Sayı Girişi Yazın");
             }
-            else if (!checkFloat(strBalance)){
+            else if (checkFloat(strBalance)){
                 label.setText("En Fazla 99,999.9 ₺ Çekilebilir");
             }
             else if(Float.parseFloat(strBalance) > Float.parseFloat(exBalance)){
@@ -246,7 +255,7 @@ public class Panels {
 
         String beforeDot = str.substring(0, dotIndex);
 
-        return beforeDot.length() <= 5;
+        return beforeDot.length() > 5;
     }
 
     private JPanel loginPanel() throws SQLException {

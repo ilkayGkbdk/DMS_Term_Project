@@ -158,7 +158,7 @@ public class Query {
         }
     }
 
-    public boolean isHave(String select, String from, String value, DataType dt) throws SQLException{
+    public boolean isHave(String select, String from, String whereKey, String value, DataType dt) throws SQLException{
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -167,7 +167,9 @@ public class Query {
 
         try {
             connection = MSSQLConnection.getInstance().createConnection();
-            ps = connection.prepareStatement("SELECT " + select + " FROM " + from);
+            ps = connection.prepareStatement("SELECT " + select + " FROM " + from + " WHERE " +
+                    whereKey + " = ?");
+            ps.setString(1, value);
             rs = ps.executeQuery();
 
             while(rs.next()){
