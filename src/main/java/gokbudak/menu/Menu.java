@@ -12,7 +12,8 @@ import java.util.Objects;
 
 public class Menu extends BlurBackground {
 
-    private SystemMenu systemMenu;
+    private UserMenu userMenu;
+    private AdminMenu adminMenu;
     private Title title;
     private JDesktopPane desktopPane;
 
@@ -25,7 +26,12 @@ public class Menu extends BlurBackground {
 
     private void init(String username) throws SQLException {
         setLayout(new MigLayout("fill, insets 0 0 6 6", "[fill]", "[fill]"));
-        systemMenu = new SystemMenu(username);
+        if(username.equals("admin")){
+            adminMenu = new AdminMenu(username);
+        }
+        else{
+            userMenu = new UserMenu(username);
+        }
         title = new Title();
         desktopPane = new JDesktopPane();
 
@@ -33,7 +39,13 @@ public class Menu extends BlurBackground {
         desktopPane.setOpaque(false);
         FormManager.getInstance().setDesktopPane(desktopPane);
 
-        add(systemMenu, "dock west, gap 6 6 32 6, width 280!");
+        if(username.equals("admin")){
+            add(adminMenu, "dock west, gap 6 6 32 6, width 280!");
+        }
+        else{
+            add(userMenu, "dock west, gap 6 6 32 6, width 280!");
+        }
+
         add(title, "dock north, gap 0 6 32 6, height 50!");
         add(desktopPane);
     }

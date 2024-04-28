@@ -22,9 +22,9 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 
-public class SystemMenu extends BlurChild {
+public class UserMenu extends BlurChild {
 
-    public SystemMenu(String username) throws SQLException {
+    public UserMenu(String username) throws SQLException {
         super(new Style()
                 .setBlur(30)
                 .setBorder(new StyleBorder(10)
