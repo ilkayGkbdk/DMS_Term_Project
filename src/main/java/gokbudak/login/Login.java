@@ -3,7 +3,6 @@ package gokbudak.login;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import gokbudak.database.Query;
-import gokbudak.database.MSSQLConnection;
 import gokbudak.manager.FormManager;
 import gokbudak.menu.Menu;
 import net.miginfocom.swing.MigLayout;
@@ -21,7 +20,6 @@ public class Login extends JPanel{
     private JPasswordField txtPassword;
     private JCheckBox cbRememberMe;
     private JButton cmdLogin;
-    private MSSQLConnection connection;
     private String username, password;
 
     private static String currentUserId;

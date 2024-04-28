@@ -10,6 +10,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -98,10 +100,47 @@ public class Panels {
 
         JLabel lbBalance = new JLabel("Bakiye");
         JLabel balance = new JLabel(Query.getInstance().select("current_balance", "balances", "user_id", Login.getCurrentUserId(), Query.DataType.FLOAT) + " ₺");
+        JLabel smallPr = new JLabel(Query.getInstance().select("weekly_price", "products", "product_id", "1", Query.DataType.FLOAT) + " ₺");
+        JLabel mediumPr = new JLabel(Query.getInstance().select("weekly_price", "products", "product_id", "2", Query.DataType.FLOAT) + " ₺");
+        JLabel largePr = new JLabel(Query.getInstance().select("weekly_price", "products", "product_id", "3", Query.DataType.FLOAT) + " ₺");
+
+        JPanel flowPanel1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        flowPanel1.putClientProperty(FlatClientProperties.STYLE, "background:null");
+        JPanel flowPanel2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        flowPanel2.putClientProperty(FlatClientProperties.STYLE, "background:null");
+        JPanel flowPanel3 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        flowPanel3.putClientProperty(FlatClientProperties.STYLE, "background:null");
+
+        flowPanel1.add(smallPr);
+        flowPanel2.add(mediumPr);
+        flowPanel3.add(largePr);
+
+        JPanel title = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        title.putClientProperty(FlatClientProperties.STYLE, "background:null");
+        JLabel label = new JLabel("Lütfen Satın Almak İstediğiniz Depoyu Seçin");
+        label.putClientProperty(FlatClientProperties.STYLE, "font:bold +4;");
+        title.add(label);
 
         lbBalance.putClientProperty(FlatClientProperties.STYLE, "font:bold +3; foreground:#23904AFF");
         balance.putClientProperty(FlatClientProperties.STYLE, "font:italic +4");
+        smallPr.putClientProperty(FlatClientProperties.STYLE, "font:italic +3");
+        mediumPr.putClientProperty(FlatClientProperties.STYLE, "font:italic +3");
+        largePr.putClientProperty(FlatClientProperties.STYLE, "font:italic +3");
 
+        nestPanel.add(lbBalance, "wrap 2");
+        nestPanel.add(balance);
+        nestPanel.add(new JSeparator(), "gapy 5 5");
+        nestPanel.add(title, "gapy 8");
+        nestPanel.add(createInfoLabel("SMALL", "5", "#F4D03F", true), "split 3, gapy 16");
+        nestPanel.add(createInfoLabel("MEDIUM", "5", "#EB984E", true), "gapy 16");
+        nestPanel.add(createInfoLabel("LARGE", "5", "#E74C3C", true), "gapy 16");
+        nestPanel.add(flowPanel1, "split 3");
+        nestPanel.add(flowPanel2);
+        nestPanel.add(flowPanel3);
+        nestPanel.add(new JSeparator(), "gapy 5 5");
+        nestPanel.add(createInfoLabel("Fiyatlar, haftalık ödenecek fiyatlardır", "4", "#E0DBDA", false));
+
+        panel.add(nestPanel);
         return panel;
     }
 
@@ -116,7 +155,7 @@ public class Panels {
                         "[dark]background:lighten(@background,3%)");
 
         if(!Query.getInstance().isHave("situation", "orders", "user_id", Login.getCurrentUserId(),"AND deliveryDate IS NOT NULL", "Aktif", Query.DataType.STRING)){
-            nestPanel.add(createInfoLabel("Aktif Deponuz Bulunmamaktadır"));
+            nestPanel.add(createInfoLabel("Aktif Deponuz Bulunmamaktadır", "5", "#2ECC71", false));
             panel.add(nestPanel);
         }
         else {
@@ -474,12 +513,54 @@ public class Panels {
         return panel;
     }
 
-    private Component createInfoLabel(String text){
+    private Component createInfoLabel(String text, String font, String color, boolean listener){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         panel.putClientProperty(FlatClientProperties.STYLE, "background:null");
 
-        JLabel label = new JLabel("<html><a href = \"#\">" + text + "</a></html>");
-        label.putClientProperty(FlatClientProperties.STYLE, "font:bold +5; foreground:#23904AFF");
+        JLabel label = new JLabel(text);
+        label.putClientProperty(FlatClientProperties.STYLE, "font:bold +" + font + "; foreground:" + color);
+
+        if(listener){
+            label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            JLabel size = new JLabel();
+            JLabel stock = new JLabel();
+            JLabel price = new JLabel();
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    switch (text) {
+                        case "SMALL" -> {
+                            try {
+                                size.setText(Query.getInstance().select("size", "products", "product_id", "1", Query.DataType.INTEGER) + " m3");
+                                stock.setText(Query.getInstance().select("stock", "products", "product_id", "1", Query.DataType.INTEGER));
+                                price.setText(Query.getInstance().select("weekly_price", "products", "product_id", "1", Query.DataType.FLOAT) + " ₺");
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                        case "MEDIUM" -> {
+                            try {
+                                size.setText(Query.getInstance().select("size", "products", "product_id", "2", Query.DataType.INTEGER) + " m3");
+                                stock.setText(Query.getInstance().select("stock", "products", "product_id", "2", Query.DataType.INTEGER));
+                                price.setText(Query.getInstance().select("weekly_price", "products", "product_id", "2", Query.DataType.FLOAT) + " ₺");
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                        case "LARGE" -> {
+                            try {
+                                size.setText(Query.getInstance().select("size", "products", "product_id", "3", Query.DataType.INTEGER) + " m3");
+                                stock.setText(Query.getInstance().select("stock", "products", "product_id", "3", Query.DataType.INTEGER));
+                                price.setText(Query.getInstance().select("weekly_price", "products", "product_id", "3", Query.DataType.FLOAT) + " ₺");
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                    }
+                    new Message(text, size, stock, price);
+                }
+            });
+        }
 
         panel.add(label);
         return panel;
