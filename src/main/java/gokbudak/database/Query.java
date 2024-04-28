@@ -111,6 +111,30 @@ public class Query {
         }
     }
 
+    //insert for orders table
+    public void insert(int order_id, int user_id, int product_id) throws SQLException {
+        Connection connection = null;
+        PreparedStatement ps = null;
+
+        try {
+            connection = MSSQLConnection.getInstance().createConnection();
+            ps = connection.prepareStatement(
+                    "INSERT INTO orders (order_id, user_id, product_id, is_delivered, saleDate) " +
+                            "VALUES (?,?,?,?,?)");
+
+            ps.setInt(1, order_id);
+            ps.setInt(2, user_id);
+            ps.setInt(3, product_id);
+            ps.setByte(4, (byte) 0);
+            ps.setString(5, getDate());
+
+            ps.execute();
+        }
+        finally {
+            MSSQLConnection.getInstance().close(connection, ps);
+        }
+    }
+
     public void update(String update, String set, String setValue, String whereKey, String whereValue, DataType dt) throws SQLException{
         Connection connection = null;
         PreparedStatement ps = null;
@@ -171,6 +195,48 @@ public class Query {
             ps = connection.prepareStatement("SELECT " + select + " FROM " + from + " WHERE " +
                     whereKey + " = ? " + extra);
             ps.setString(1, whereValue);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                if (dt.equals(DataType.STRING)) {
+                    if (rs.getString(1).equals(value)) {
+                        have = true;
+                    }
+                }
+                else if (dt.equals(DataType.INTEGER)) {
+                    if (rs.getInt(1) == Integer.parseInt(value)){
+                        have = true;
+                    }
+                }
+                else if(dt.equals(DataType.FLOAT)) {
+                    if (rs.getFloat(1) == Float.parseFloat(value)){
+                        have = true;
+                    }
+                }
+                else if(dt.equals(DataType.DATE) || dt.equals(DataType.TIME)){
+                    if (rs.getString(1).equals(value)){
+                        have = true;
+                    }
+                }
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(connection, ps, rs);
+        }
+
+        return have;
+    }
+
+    public boolean isHave(String select, String from, String value, DataType dt) throws SQLException{
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        boolean have = false;
+
+        try {
+            connection = MSSQLConnection.getInstance().createConnection();
+            ps = connection.prepareStatement("SELECT " + select + " FROM " + from);
             rs = ps.executeQuery();
 
             while(rs.next()){
