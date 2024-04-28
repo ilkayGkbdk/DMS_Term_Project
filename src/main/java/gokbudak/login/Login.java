@@ -135,7 +135,7 @@ public class Login extends JPanel{
         }
         else {
             try {
-                if (!Query.getInstance().isHave("username", "loginInfos", "username", username, "", username, Query.DataType.STRING)){
+                if (Query.getInstance().isHave("username", "loginInfos", "username", username, "", username, Query.DataType.STRING)){
                     label.setText("Kullanıcı adı yanlış");
                 }
                 else if (!Query.getInstance().select("password", "loginInfos", "username", username, Query.DataType.STRING).equals(password)){

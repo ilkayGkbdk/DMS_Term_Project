@@ -224,7 +224,7 @@ public class Query {
             MSSQLConnection.getInstance().close(connection, ps, rs);
         }
 
-        return have;
+        return !have;
     }
 
     public boolean isHave(String select, String from, String value, DataType dt) throws SQLException{

@@ -19,8 +19,7 @@ import java.util.Objects;
 public class Panels {
 
     public enum SystemPanel {
-        PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE, SHOW_ITEMS,
-        ADD_ITEMS, QUESTIONS
+        PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE
     }
 
     private static Panels instance;
@@ -41,7 +40,6 @@ public class Panels {
             }
             case LOGIN_INFO -> {
                 return loginPanel();
-
             }
             case BALANCE -> {
                 return balancePanel();
@@ -52,41 +50,8 @@ public class Panels {
             case BUY_WAREHOUSE -> {
                 return buyPanel();
             }
-            case SHOW_ITEMS -> {
-                return itemsPanel();
-            }
-            case ADD_ITEMS -> {
-                return addItemPanel();
-            }
-            case QUESTIONS -> {
-                return questionPanel();
-            }
         }
         return null;
-    }
-
-    private JPanel questionPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
-        JLabel label = new JLabel("questionPanel");
-        panel.add(label);
-        return panel;
-    }
-
-    private JPanel addItemPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
-        JLabel label = new JLabel("addItemPanel");
-        panel.add(label);
-        return panel;
-    }
-
-    private JPanel itemsPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
-        JLabel label = new JLabel("itemsPanel");
-        panel.add(label);
-        return panel;
     }
 
     private JPanel buyPanel() throws SQLException {
@@ -154,7 +119,7 @@ public class Panels {
                         "[light]background:darken(@background,3%);" +
                         "[dark]background:lighten(@background,3%)");
 
-        if(!Query.getInstance().isHave("situation", "orders", "user_id", Login.getCurrentUserId(),"AND deliveryDate IS NOT NULL", "Aktif", Query.DataType.STRING)){
+        if(Query.getInstance().isHave("situation", "orders", "user_id", Login.getCurrentUserId(), "AND deliveryDate IS NOT NULL", "Aktif", Query.DataType.STRING)){
             nestPanel.add(createInfoLabel("Aktif Deponuz Bulunmamaktadır", "5", "#2ECC71", false));
             panel.add(nestPanel);
         }
@@ -166,7 +131,6 @@ public class Panels {
 
         return panel;
     }
-
 
     private static JScrollPane getjScrollPane() throws SQLException {
         JTable table = getjTable();
