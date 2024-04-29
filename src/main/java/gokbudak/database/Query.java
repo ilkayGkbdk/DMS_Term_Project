@@ -1,5 +1,8 @@
 package gokbudak.database;
 
+import com.formdev.flatlaf.FlatClientProperties;
+
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -159,6 +162,9 @@ public class Query {
             else if (dt.equals(DataType.TIME)){
                 ps.setString(1, getTime());
             }
+            else if (dt.equals(DataType.BYTE)){
+                ps.setByte(1, Byte.parseByte(setValue));
+            }
 
             ps.setString(2, whereValue);
             ps.execute();
@@ -195,7 +201,6 @@ public class Query {
             ps = connection.prepareStatement("SELECT " + select + " FROM " + from + " WHERE " +
                     whereKey + " = ? " + extra);
             if(dt.equals(DataType.BYTE)){
-                System.out.println(Byte.parseByte(whereValue));
                 ps.setByte(1, Byte.parseByte(whereValue));
             }
             else{
@@ -402,7 +407,7 @@ public class Query {
         }
     }
 
-    public ArrayList<Object[]> getDataForWRInfo(String select, String from, String join, String onLeft, String onRight, String whereV, String whereK) throws SQLException {
+    public ArrayList<Object[]> getDataForWRInfo(String select, String from, String join, String onLeft, String onRight, String whereV, String whereK, String extra) throws SQLException {
         ArrayList<Object[]> dataList = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -414,7 +419,8 @@ public class Query {
                     " FROM " + from +
                     " JOIN " + join +
                     " ON "  + onLeft + " = " + onRight +
-                    " WHERE " + whereV + " = ?");
+                    " WHERE " + whereV + " = ?" +
+                    extra);
             ps.setString(1, whereK);
             rs = ps.executeQuery();
 
@@ -436,7 +442,7 @@ public class Query {
         return dataList;
     }
 
-    public ArrayList<Object[]> getDataForUserInfo(String select, String from, String join, String onLeft, String onRight, String secondJoin, String secondOnL, String secondOnR) throws SQLException {
+    public ArrayList<Object[]> getDataForUserInfo(String select, String from, String join, String onLeft, String onRight, String secondJoin, String secondOnL, String secondOnR, String whereValue, String whereKey) throws SQLException {
         ArrayList<Object[]> dataList = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -449,7 +455,8 @@ public class Query {
                     " JOIN " + join +
                     " ON "  + onLeft + " = " + onRight +
                     " JOIN " + secondJoin +
-                    " ON " + secondOnL + " = " + secondOnR);
+                    " ON " + secondOnL + " = " + secondOnR +
+                    " WHERE " + whereValue + " = " + whereKey);
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -461,6 +468,42 @@ public class Query {
                 String saleDate = rs.getString("saleDate");
 
                 Object[] row = {order_id, firstName, lastName, TCNumber, name, saleDate};
+                dataList.add(row);
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        return dataList;
+    }
+
+    public ArrayList<Object[]> getDataForAdminWR_Show(String select, String from, String join, String onLeft, String onRight, String secondJoin, String secondOnL, String secondOnR, String whereValue, String whereKey) throws SQLException {
+        ArrayList<Object[]> dataList = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select +
+                    " FROM " + from +
+                    " JOIN " + join +
+                    " ON "  + onLeft + " = " + onRight +
+                    " JOIN " + secondJoin +
+                    " ON " + secondOnL + " = " + secondOnR +
+                    " WHERE " + whereValue + " = " + whereKey);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                String firstName = rs.getString("firstName");
+                String lastName = rs.getString("lastName");
+                String TCNumber = rs.getString("TCNumber");
+                String situation = rs.getString("situation");
+                String saleDate = rs.getString("saleDate");
+
+                Object[] row = {name, firstName, lastName, TCNumber, situation, saleDate};
                 dataList.add(row);
             }
         }

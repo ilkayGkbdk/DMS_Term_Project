@@ -147,7 +147,7 @@ public class AdminMenu extends BlurChild {
                             }
                             else if(subIndex == 1){
                                 try {
-                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.WR_REQUESTS));
+                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.ADMIN_REQUESTS));
                                 } catch (PropertyVetoException | SQLException e) {
                                     throw new RuntimeException(e);
                                 }

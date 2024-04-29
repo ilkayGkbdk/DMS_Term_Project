@@ -18,7 +18,7 @@ public class Panels {
 
     public enum SystemPanel {
         PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE,
-        WR_REQUESTS
+        ADMIN_REQUESTS, ADMIN_SHOW_WR
     }
 
     private static Panels instance;
@@ -49,18 +49,36 @@ public class Panels {
             case BUY_WAREHOUSE -> {
                 return buyPanel();
             }
-            case WR_REQUESTS -> {
-                return requestsPanel();
+            case ADMIN_REQUESTS -> {
+                return adminRequestsPanel();
+            }
+            case ADMIN_SHOW_WR -> {
+                return adminShowWRPanel();
             }
         }
         return null;
     }
 
-    private JPanel requestsPanel() throws SQLException{
+    private JPanel adminShowWRPanel() throws SQLException{
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
-        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45"));
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "fill"));
+        nestPanel.putClientProperty(FlatClientProperties.STYLE,
+                "arc:20;" +
+                "[light]background:darken(@background,3%);" +
+                "[dark]background:lighten(@background,3%)");
+
+
+
+        return panel;
+    }
+
+    private JPanel adminRequestsPanel() throws SQLException{
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "fill"));
         nestPanel.putClientProperty(FlatClientProperties.STYLE,
                 "arc:20;" +
                 "[light]background:darken(@background,3%);" +
@@ -69,9 +87,57 @@ public class Panels {
         if(Query.getInstance().isHave("is_delivered", "orders", "is_delivered", "0", "", "0", Query.DataType.BYTE)){
             String[] columnNames = {"order_id", "İsim", "Soyisim", "TC No", "Depo Adı", "Satış Tarihi"};
             JScrollPane scrollPane = TableManager.getjScrollPane(columnNames, 2);
+            JTextField txtId = new JTextField();
+            JButton button = new JButton("Onayla");
+            txtId.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "order_id değeri girin");
+            txtId.putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true);
+            button.putClientProperty(FlatClientProperties.STYLE,
+                    "[light]background:darken(@background, 10%);" +
+                            "[dark]background:lighten(@background, 10%);" +
+                            "borderWidth:0;" +
+                            "focusWidth:0;" +
+                            "innerFocusWidth:0;" +
+                            "foreground:#E0DBDA");
+
+            button.addActionListener(e -> {
+                JLabel label = new JLabel();
+                label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
+                boolean isError = true;
+                try {
+                    if(!Query.getInstance().isHave("order_id", "orders", "order_id", txtId.getText(), "", txtId.getText(), Query.DataType.INTEGER)){
+                        label.setText("Sipariş Numarası Bulunamadı");
+                    }
+                    else if(!Query.getInstance().isHave("is_delivered", "orders", "order_id", txtId.getText(), "", "0", Query.DataType.BYTE)){
+                        label.setText("Sipariş Numarası Bulunamadı");
+                    }
+                    else{
+                        Query.getInstance().update("orders", "is_delivered", "1", "order_id", txtId.getText(), Query.DataType.BYTE);
+                        Query.getInstance().update("orders", "situation", "Aktif", "order_id", txtId.getText(), Query.DataType.STRING);
+                        Query.getInstance().update("orders", "deliveryDate", Query.getInstance().getDate(), "order_id", txtId.getText(), Query.DataType.DATE);
+                        label.setText("Sipariş Başarıyla Onaylandı!");
+                        JOptionPane.showMessageDialog(null, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
+                                new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
+                        isError = false;
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                if (isError) {
+                    JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
+                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+                }
+            });
+
             nestPanel.add(scrollPane, "width 100%");
+            nestPanel.add(new JSeparator(), "gapy 5 5");
+            nestPanel.add(createInfoLabel("Onaylanacak Siparişin Numarasını Girin (order_id)", "4", "#E0DBDA", false));
+            nestPanel.add(createInfoLabel("", "5", "#2ECC71", false), "split 3, gapy 8");
+            nestPanel.add(txtId);
+            nestPanel.add(createInfoLabel("", "5", "#2ECC71", false));
+            nestPanel.add(createInfoLabel("", "5", "#2ECC71", false), "split 3, gapy 8");
+            nestPanel.add(button);
+            nestPanel.add(createInfoLabel("", "5", "#2ECC71", false));
             panel.add(nestPanel, "width 100%, height 100%");
-            //TODO
         }
         else{
             nestPanel.add(createInfoLabel("Bekleyen Depo İsteği Yok", "5", "#2ECC71", false));

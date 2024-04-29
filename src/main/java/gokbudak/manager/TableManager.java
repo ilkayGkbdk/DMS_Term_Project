@@ -44,8 +44,11 @@ public class TableManager {
         if(i == 1){
             model = getDefaultTableModel1(columnNames);
         }
-        else {
+        else if (i==2){
             model = getDefaultTableModel2(columnNames);
+        }
+        else{
+            model = getDefaultTableModel3(columnNames);
         }
         JTable table = new JTable(model);
         table.setDefaultRenderer(Object.class, new TableGradientCell());
@@ -61,7 +64,8 @@ public class TableManager {
 
         ArrayList<Object[]> dataList = Query.getInstance().getDataForWRInfo("p.name, p.size, o.saleDate, o.deliveryDate, o.situation",
                 "products p", "orders o", "p.product_id", "o.product_id",
-                "user_id", Login.getCurrentUserId());
+                "user_id", Login.getCurrentUserId(),
+                "AND o.is_delivered = 1");
 
         Object[][] data = dataList.toArray(new Object[dataList.size()][]);
 
@@ -77,7 +81,25 @@ public class TableManager {
 
         ArrayList<Object[]> dataList = Query.getInstance().getDataForUserInfo("o.order_id, u.firstName, u.lastName, u.TCNumber,  p.name, o.saleDate",
                 "orders o", "users u", "o.user_id", "u.user_id",
-                "products p", "o.product_id", "p.product_id");
+                "products p", "o.product_id", "p.product_id",
+                "o.is_delivered", "0");
+
+        Object[][] data = dataList.toArray(new Object[dataList.size()][]);
+
+        return new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    private static DefaultTableModel getDefaultTableModel3(String[] columnNames) throws SQLException {
+
+        ArrayList<Object[]> dataList = Query.getInstance().getDataForAdminWR_Show("p.name, u.firstName, u.lastName, u.TCNumber, o.situation, o.saleDate",
+                "orders o", "users u", "o.user_id", "u.user_id",
+                "products p", "o.product_id", "p.product_id",
+                "o.is_delivered", "1");
 
         Object[][] data = dataList.toArray(new Object[dataList.size()][]);
 
