@@ -8,7 +8,7 @@ public class Query {
     private static Query instance;
 
     public enum DataType {
-        STRING, INTEGER, FLOAT, DATE, TIME
+        STRING, INTEGER, FLOAT, DATE, TIME, BYTE
     }
 
     public enum OrderType {
@@ -194,7 +194,13 @@ public class Query {
             connection = MSSQLConnection.getInstance().createConnection();
             ps = connection.prepareStatement("SELECT " + select + " FROM " + from + " WHERE " +
                     whereKey + " = ? " + extra);
-            ps.setString(1, whereValue);
+            if(dt.equals(DataType.BYTE)){
+                System.out.println(Byte.parseByte(whereValue));
+                ps.setByte(1, Byte.parseByte(whereValue));
+            }
+            else{
+                ps.setString(1, whereValue);
+            }
             rs = ps.executeQuery();
 
             while(rs.next()){
@@ -218,13 +224,18 @@ public class Query {
                         have = true;
                     }
                 }
+                else if(dt.equals(DataType.BYTE)){
+                    if (rs.getByte(1) == Byte.parseByte(value)){
+                        have = true;
+                    }
+                }
             }
         }
         finally {
             MSSQLConnection.getInstance().close(connection, ps, rs);
         }
 
-        return !have;
+        return have;
     }
 
     public boolean isHave(String select, String from, String value, DataType dt) throws SQLException{
@@ -391,7 +402,7 @@ public class Query {
         }
     }
 
-    public ArrayList<Object[]> getDataFromDatabase(String select, String from, String join, String onLeft, String onRight, String whereV, String whereK) throws SQLException {
+    public ArrayList<Object[]> getDataForWRInfo(String select, String from, String join, String onLeft, String onRight, String whereV, String whereK) throws SQLException {
         ArrayList<Object[]> dataList = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -415,6 +426,41 @@ public class Query {
                 String deliveryDate = rs.getString("deliveryDate");
 
                 Object[] row = {name, size, situation, saleDate, deliveryDate};
+                dataList.add(row);
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        return dataList;
+    }
+
+    public ArrayList<Object[]> getDataForUserInfo(String select, String from, String join, String onLeft, String onRight, String secondJoin, String secondOnL, String secondOnR) throws SQLException {
+        ArrayList<Object[]> dataList = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select +
+                    " FROM " + from +
+                    " JOIN " + join +
+                    " ON "  + onLeft + " = " + onRight +
+                    " JOIN " + secondJoin +
+                    " ON " + secondOnL + " = " + secondOnR);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int order_id = rs.getInt("order_id");
+                String firstName = rs.getString("firstName");
+                String lastName = rs.getString("lastName");
+                String TCNumber = rs.getString("TCNumber");
+                String name = rs.getString("name");
+                String saleDate = rs.getString("saleDate");
+
+                Object[] row = {order_id, firstName, lastName, TCNumber, name, saleDate};
                 dataList.add(row);
             }
         }

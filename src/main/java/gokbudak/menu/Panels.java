@@ -4,22 +4,21 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import gokbudak.database.Query;
 import gokbudak.login.Login;
+import gokbudak.manager.TableManager;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Panels {
 
     public enum SystemPanel {
-        PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE
+        PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE,
+        WR_REQUESTS
     }
 
     private static Panels instance;
@@ -50,8 +49,35 @@ public class Panels {
             case BUY_WAREHOUSE -> {
                 return buyPanel();
             }
+            case WR_REQUESTS -> {
+                return requestsPanel();
+            }
         }
         return null;
+    }
+
+    private JPanel requestsPanel() throws SQLException{
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45"));
+        nestPanel.putClientProperty(FlatClientProperties.STYLE,
+                "arc:20;" +
+                "[light]background:darken(@background,3%);" +
+                "[dark]background:lighten(@background,3%)");
+
+        if(Query.getInstance().isHave("is_delivered", "orders", "is_delivered", "0", "", "0", Query.DataType.BYTE)){
+            String[] columnNames = {"order_id", "İsim", "Soyisim", "TC No", "Depo Adı", "Satış Tarihi"};
+            JScrollPane scrollPane = TableManager.getjScrollPane(columnNames, 2);
+            nestPanel.add(scrollPane, "width 100%");
+            panel.add(nestPanel, "width 100%, height 100%");
+            //TODO
+        }
+        else{
+            nestPanel.add(createInfoLabel("Bekleyen Depo İsteği Yok", "5", "#2ECC71", false));
+            panel.add(nestPanel);
+        }
+        return panel;
     }
 
     private JPanel buyPanel() throws SQLException {
@@ -116,75 +142,21 @@ public class Panels {
         JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45"));
         nestPanel.putClientProperty(FlatClientProperties.STYLE,
                 "arc:20;" +
-                        "[light]background:darken(@background,3%);" +
-                        "[dark]background:lighten(@background,3%)");
+                "[light]background:darken(@background,3%);" +
+                "[dark]background:lighten(@background,3%)");
 
-        if(Query.getInstance().isHave("situation", "orders", "user_id", Login.getCurrentUserId(), "AND deliveryDate IS NOT NULL", "Aktif", Query.DataType.STRING)){
+        if(!Query.getInstance().isHave("situation", "orders", "user_id", Login.getCurrentUserId(), "AND deliveryDate IS NOT NULL", "Aktif", Query.DataType.STRING)){
             nestPanel.add(createInfoLabel("Aktif Deponuz Bulunmamaktadır", "5", "#2ECC71", false));
             panel.add(nestPanel);
         }
         else {
-            JScrollPane scrollPane = getjScrollPane();
+            String[] columnNames = {"Depo Adı", "Boyut", "Durum", "Satın Alma Tarihi", "Teslim Tarihi"};
+            JScrollPane scrollPane = TableManager.getjScrollPane(columnNames, 1);
             nestPanel.add(scrollPane, "width 100%");
             panel.add(nestPanel, "width 100%, height 100%");
         }
 
         return panel;
-    }
-
-    private static JScrollPane getjScrollPane() throws SQLException {
-        JTable table = getjTable();
-
-        TableColumn clmName = table.getColumnModel().getColumn(0);
-        TableColumn clmSize = table.getColumnModel().getColumn(1);
-        TableColumn clmSituation = table.getColumnModel().getColumn(2);
-        TableColumn clmSaleDt = table.getColumnModel().getColumn(3);
-        TableColumn clmDeliveryDt = table.getColumnModel().getColumn(4);
-
-        clmName.setResizable(false);
-        clmSize.setResizable(false);
-        clmSituation.setResizable(false);
-        clmSaleDt.setResizable(false);
-        clmSaleDt.setPreferredWidth(150);
-        clmDeliveryDt.setResizable(false);
-        clmDeliveryDt.setPreferredWidth(150);
-
-        table.getTableHeader().setReorderingAllowed(false);
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE,
-                "hoverTrackColor:null");
-
-        return scrollPane;
-    }
-
-    private static JTable getjTable() throws SQLException {
-        DefaultTableModel model = getDefaultTableModel();
-        JTable table = new JTable(model);
-        table.setDefaultRenderer(Object.class, new TableGradientCell());
-        table.getTableHeader().putClientProperty(FlatClientProperties.STYLE,
-                "hoverBackground:null;"
-                + "pressedBackground:null;"
-                + "separatorColor:$TableHeader.background");
-
-        return table;
-    }
-
-    private static DefaultTableModel getDefaultTableModel() throws SQLException {
-
-        ArrayList<Object[]> dataList = Query.getInstance().getDataFromDatabase("p.name, p.size, o.saleDate, o.deliveryDate, o.situation",
-                "products p", "orders o", "p.product_id", "o.product_id",
-                "user_id", Login.getCurrentUserId());
-
-        Object[][] data = dataList.toArray(new Object[dataList.size()][]);
-        Object[] columnNames = {"Depo Adı", "Boyut", "Durum", "Satın Alma Tarihi", "Teslim Tarihi"};
-
-        return new DefaultTableModel(data, columnNames) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
     }
 
     private JPanel balancePanel() throws SQLException {
