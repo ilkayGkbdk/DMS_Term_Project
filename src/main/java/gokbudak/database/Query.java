@@ -1,8 +1,5 @@
 package gokbudak.database;
 
-import com.formdev.flatlaf.FlatClientProperties;
-
-import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -407,7 +404,7 @@ public class Query {
         }
     }
 
-    public ArrayList<Object[]> getDataForWRInfo(String select, String from, String join, String onLeft, String onRight, String whereV, String whereK, String extra) throws SQLException {
+    public ArrayList<Object[]> getDataOfWRInfo_ForUser(String select, String from, String join, String onLeft, String onRight, String whereV, String whereK, String extra) throws SQLException {
         ArrayList<Object[]> dataList = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -442,7 +439,7 @@ public class Query {
         return dataList;
     }
 
-    public ArrayList<Object[]> getDataForUserInfo(String select, String from, String join, String onLeft, String onRight, String secondJoin, String secondOnL, String secondOnR, String whereValue, String whereKey) throws SQLException {
+    public ArrayList<Object[]> getDataOfUserRequests_ForAdmin(String select, String from, String join, String onLeft, String onRight, String secondJoin, String secondOnL, String secondOnR, String whereValue, String whereKey) throws SQLException {
         ArrayList<Object[]> dataList = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -478,7 +475,7 @@ public class Query {
         return dataList;
     }
 
-    public ArrayList<Object[]> getDataForAdminWR_Show(String select, String from, String join, String onLeft, String onRight, String secondJoin, String secondOnL, String secondOnR, String whereValue, String whereKey) throws SQLException {
+    public ArrayList<Object[]> getDataOfInUseWRs_ForAdmin(String select, String from, String join, String onLeft, String onRight, String secondJoin, String secondOnL, String secondOnR, String whereValue, String whereKey) throws SQLException {
         ArrayList<Object[]> dataList = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -504,6 +501,36 @@ public class Query {
                 String saleDate = rs.getString("saleDate");
 
                 Object[] row = {name, firstName, lastName, TCNumber, situation, saleDate};
+                dataList.add(row);
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        return dataList;
+    }
+
+    public ArrayList<Object[]> getDataOfAllWRInfo_ForAdmin(String select, String from) throws SQLException {
+        ArrayList<Object[]> dataList = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select +
+                    " FROM " + from);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int product_id = rs.getInt("product_id");
+                String name = rs.getString("name");
+                String size = rs.getString("size");
+                float weekly_price = rs.getFloat("weekly_price");
+                int stock = rs.getInt("stock");
+
+                Object[] row = {product_id, name, size, weekly_price, stock};
                 dataList.add(row);
             }
         }

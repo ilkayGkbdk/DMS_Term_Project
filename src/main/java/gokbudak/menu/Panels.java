@@ -18,7 +18,7 @@ public class Panels {
 
     public enum SystemPanel {
         PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE,
-        ADMIN_REQUESTS, ADMIN_SHOW_WR
+        ADMIN_REQUESTS, ADMIN_SHOW_WR, ADMIN_SHOW_USERS
     }
 
     private static Panels instance;
@@ -63,14 +63,24 @@ public class Panels {
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
-        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45", "fill"));
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx", "fill"));
         nestPanel.putClientProperty(FlatClientProperties.STYLE,
                 "arc:20;" +
                 "[light]background:darken(@background,3%);" +
                 "[dark]background:lighten(@background,3%)");
 
+        String[] columnNames1 = {"product_id", "Depo Adı", "Boyut", "Haftalık Ücret", "Kalan Adet"};
+        JScrollPane scrollPane1 = TableManager.getjScrollPane(columnNames1, 4);
 
+        String[] columnNames2 = {"Depo Adı", "İsim", "Soyisim", "TC No", "Durum", "Satış Tarihi"};
+        JScrollPane scrollPane2 = TableManager.getjScrollPane(columnNames2, 3);
 
+        nestPanel.add(createInfoLabel("Tüm Depolar", "4", "#E0DBDA", false));
+        nestPanel.add(scrollPane1, "width 100%");
+        nestPanel.add(createInfoLabel("Kullanımda Olan Depolar", "4", "#E0DBDA", false), "gapy 8");
+        nestPanel.add(scrollPane2, "width 100%");
+
+        panel.add(nestPanel, "width 100%, height 100%");
         return panel;
     }
 

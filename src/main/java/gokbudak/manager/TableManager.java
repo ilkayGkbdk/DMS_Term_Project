@@ -44,11 +44,17 @@ public class TableManager {
         if(i == 1){
             model = getDefaultTableModel1(columnNames);
         }
-        else if (i==2){
+        else if (i == 2){
             model = getDefaultTableModel2(columnNames);
         }
-        else{
+        else if (i == 3){
             model = getDefaultTableModel3(columnNames);
+        }
+        else if (i == 4){
+            model = getDefaultTableModel4(columnNames);
+        }
+        else{
+            model = null;
         }
         JTable table = new JTable(model);
         table.setDefaultRenderer(Object.class, new TableGradientCell());
@@ -62,7 +68,7 @@ public class TableManager {
 
     private static DefaultTableModel getDefaultTableModel1(String[] columnNames) throws SQLException {
 
-        ArrayList<Object[]> dataList = Query.getInstance().getDataForWRInfo("p.name, p.size, o.saleDate, o.deliveryDate, o.situation",
+        ArrayList<Object[]> dataList = Query.getInstance().getDataOfWRInfo_ForUser("p.name, p.size, o.saleDate, o.deliveryDate, o.situation",
                 "products p", "orders o", "p.product_id", "o.product_id",
                 "user_id", Login.getCurrentUserId(),
                 "AND o.is_delivered = 1");
@@ -79,7 +85,7 @@ public class TableManager {
 
     private static DefaultTableModel getDefaultTableModel2(String[] columnNames) throws SQLException {
 
-        ArrayList<Object[]> dataList = Query.getInstance().getDataForUserInfo("o.order_id, u.firstName, u.lastName, u.TCNumber,  p.name, o.saleDate",
+        ArrayList<Object[]> dataList = Query.getInstance().getDataOfUserRequests_ForAdmin("o.order_id, u.firstName, u.lastName, u.TCNumber,  p.name, o.saleDate",
                 "orders o", "users u", "o.user_id", "u.user_id",
                 "products p", "o.product_id", "p.product_id",
                 "o.is_delivered", "0");
@@ -96,10 +102,24 @@ public class TableManager {
 
     private static DefaultTableModel getDefaultTableModel3(String[] columnNames) throws SQLException {
 
-        ArrayList<Object[]> dataList = Query.getInstance().getDataForAdminWR_Show("p.name, u.firstName, u.lastName, u.TCNumber, o.situation, o.saleDate",
+        ArrayList<Object[]> dataList = Query.getInstance().getDataOfInUseWRs_ForAdmin("p.name, u.firstName, u.lastName, u.TCNumber, o.situation, o.saleDate",
                 "orders o", "users u", "o.user_id", "u.user_id",
                 "products p", "o.product_id", "p.product_id",
                 "o.is_delivered", "1");
+
+        Object[][] data = dataList.toArray(new Object[dataList.size()][]);
+
+        return new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    private static DefaultTableModel getDefaultTableModel4(String[] columnNames) throws SQLException {
+
+        ArrayList<Object[]> dataList = Query.getInstance().getDataOfAllWRInfo_ForAdmin("*", "products");
 
         Object[][] data = dataList.toArray(new Object[dataList.size()][]);
 
