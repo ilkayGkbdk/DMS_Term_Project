@@ -541,6 +541,94 @@ public class Query {
         return dataList;
     }
 
+    public ArrayList<Object[]> getDataOfAllUsersInfo_ForAdmin(String select, String from) throws SQLException {
+        ArrayList<Object[]> dataList = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select +
+                    " FROM " + from);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int user_id = rs.getInt("user_id");
+                String firstName = rs.getString("firstName");
+                String lastName = rs.getString("lastName");
+                String gender = rs.getString("gender");
+                String TCNumber = rs.getString("TCNumber");
+
+                Object[] row = {user_id, firstName, lastName, gender, TCNumber};
+                dataList.add(row);
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        return dataList;
+    }
+
+    public ArrayList<Object[]> getDataOfAllLoginInfo_ForAdmin(String select, String from) throws SQLException {
+        ArrayList<Object[]> dataList = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select +
+                    " FROM " + from);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int user_id = rs.getInt("user_id");
+                String username = rs.getString("username");
+                String email = rs.getString("email");
+                String phoneNumber = rs.getString("phoneNumber");
+
+                Object[] row = {user_id, username, email, phoneNumber};
+                dataList.add(row);
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        return dataList;
+    }
+
+    public ArrayList<Object[]> getDataOfAllAddressesInfo_ForAdmin(String select, String from) throws SQLException {
+        ArrayList<Object[]> dataList = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select +
+                    " FROM " + from);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int user_id = rs.getInt("user_id");
+                String city = "İstanbul";
+                String district = rs.getString("district");
+                String full_address = rs.getString("full_address");
+
+                Object[] row = {user_id, city, district, full_address};
+                dataList.add(row);
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        return dataList;
+    }
+
     public String getDate() throws SQLException {
         Connection con = null;
         PreparedStatement ps = null;

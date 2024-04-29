@@ -16,19 +16,13 @@ public class TableManager {
     public static JScrollPane getjScrollPane(String[] columnNames, int i) throws SQLException {
         JTable table = getjTable(columnNames, i);
 
-        TableColumn clmName = table.getColumnModel().getColumn(0);
-        TableColumn clmSize = table.getColumnModel().getColumn(1);
-        TableColumn clmSituation = table.getColumnModel().getColumn(2);
-        TableColumn clmSaleDt = table.getColumnModel().getColumn(3);
-        TableColumn clmDeliveryDt = table.getColumnModel().getColumn(4);
-
-        clmName.setResizable(false);
-        clmSize.setResizable(false);
-        clmSituation.setResizable(false);
-        clmSaleDt.setResizable(false);
-        clmSaleDt.setPreferredWidth(150);
-        clmDeliveryDt.setResizable(false);
-        clmDeliveryDt.setPreferredWidth(150);
+        for (int j = 0; j < columnNames.length; j++) {
+            TableColumn column = table.getColumnModel().getColumn(j);
+            column.setResizable(false);
+            if (columnNames[j].equals("Satın Alma Tarihi") || columnNames[j].equals("Teslim Tarihi")) {
+                column.setPreferredWidth(150);
+            }
+        }
 
         table.getTableHeader().setReorderingAllowed(false);
 
@@ -52,6 +46,15 @@ public class TableManager {
         }
         else if (i == 4){
             model = getDefaultTableModel4(columnNames);
+        }
+        else if (i == 5){
+            model = getDefaultTableModel5(columnNames);
+        }
+        else if (i == 6){
+            model = getDefaultTableModel6(columnNames);
+        }
+        else if (i == 7){
+            model = getDefaultTableModel7(columnNames);
         }
         else{
             model = null;
@@ -120,6 +123,48 @@ public class TableManager {
     private static DefaultTableModel getDefaultTableModel4(String[] columnNames) throws SQLException {
 
         ArrayList<Object[]> dataList = Query.getInstance().getDataOfAllWRInfo_ForAdmin("*", "products");
+
+        Object[][] data = dataList.toArray(new Object[dataList.size()][]);
+
+        return new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    private static DefaultTableModel getDefaultTableModel5(String[] columnNames) throws SQLException {
+
+        ArrayList<Object[]> dataList = Query.getInstance().getDataOfAllUsersInfo_ForAdmin("*", "users");
+
+        Object[][] data = dataList.toArray(new Object[dataList.size()][]);
+
+        return new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    private static DefaultTableModel getDefaultTableModel6(String[] columnNames) throws SQLException {
+
+        ArrayList<Object[]> dataList = Query.getInstance().getDataOfAllLoginInfo_ForAdmin("user_id, username, email, phoneNumber", "loginInfos");
+
+        Object[][] data = dataList.toArray(new Object[dataList.size()][]);
+
+        return new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    private static DefaultTableModel getDefaultTableModel7(String[] columnNames) throws SQLException {
+
+        ArrayList<Object[]> dataList = Query.getInstance().getDataOfAllAddressesInfo_ForAdmin("*", "addresses");
 
         Object[][] data = dataList.toArray(new Object[dataList.size()][]);
 

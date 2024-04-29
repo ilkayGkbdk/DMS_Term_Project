@@ -124,14 +124,14 @@ public class AdminMenu extends BlurChild {
                         if (index == 0){
                             if(subIndex == 0){
                                 try {
-                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.PERSONAL_INFO));
+                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.ADMIN_SHOW_USERS));
                                 } catch (PropertyVetoException | SQLException e) {
                                     throw new RuntimeException(e);
                                 }
                             }
                             else if(subIndex == 1){
                                 try {
-                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.LOGIN_INFO));
+                                    FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.ADMIN_DELETE_USER));
                                 } catch (PropertyVetoException | SQLException e) {
                                     throw new RuntimeException(e);
                                 }

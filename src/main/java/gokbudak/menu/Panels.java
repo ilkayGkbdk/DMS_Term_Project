@@ -18,7 +18,7 @@ public class Panels {
 
     public enum SystemPanel {
         PERSONAL_INFO, LOGIN_INFO, BALANCE, SHOW_WAREHOUSE, BUY_WAREHOUSE,
-        ADMIN_REQUESTS, ADMIN_SHOW_WR, ADMIN_SHOW_USERS
+        ADMIN_REQUESTS, ADMIN_SHOW_WR, ADMIN_SHOW_USERS, ADMIN_DELETE_USER
     }
 
     private static Panels instance;
@@ -55,7 +55,47 @@ public class Panels {
             case ADMIN_SHOW_WR -> {
                 return adminShowWRPanel();
             }
+            case ADMIN_SHOW_USERS -> {
+                return adminShowUsersPanel();
+            }
+            case ADMIN_DELETE_USER -> {
+                return adminDeleteUsersPanel();
+            }
         }
+        return null;
+    }
+
+    private JPanel adminShowUsersPanel() throws SQLException{
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx", "fill"));
+        nestPanel.putClientProperty(FlatClientProperties.STYLE,
+                "arc:20;" +
+                        "[light]background:darken(@background,3%);" +
+                        "[dark]background:lighten(@background,3%)");
+
+        String[] columnNames1 = {"user_id", "İsim", "Soyisim", "Cinsiyet", "TC No"};
+        JScrollPane scrollPane1 = TableManager.getjScrollPane(columnNames1, 5);
+
+        String[] columnNames2 = {"user_id", "Kullanıcı Adı", "E-Mail", "Telefon No"};
+        JScrollPane scrollPane2 = TableManager.getjScrollPane(columnNames2, 6);
+
+        String[] columnNames3 = {"user_id", "İl", "İlçe", "Adres"};
+        JScrollPane scrollPane3 = TableManager.getjScrollPane(columnNames3, 7);
+
+        nestPanel.add(createInfoLabel("Kişi Bilgileri", "4", "#E0DBDA", false));
+        nestPanel.add(scrollPane1, "width 100%");
+        nestPanel.add(createInfoLabel("İletişim Bilgileri", "4", "#E0DBDA", false), "gapy 8");
+        nestPanel.add(scrollPane2, "width 100%");
+        nestPanel.add(createInfoLabel("Adres Bilgileri", "4", "#E0DBDA", false), "gapy 8");
+        nestPanel.add(scrollPane3, "width 100%");
+
+        panel.add(nestPanel, "width 100%, height 100%");
+        return panel;
+    }
+
+    private JPanel adminDeleteUsersPanel() throws SQLException{
         return null;
     }
 
