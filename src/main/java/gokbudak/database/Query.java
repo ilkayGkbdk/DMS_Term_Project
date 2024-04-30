@@ -171,14 +171,16 @@ public class Query {
         }
     }
 
-    public void delete() throws SQLException{
+    public void delete(String from, String whereKey, String whereValue, String extra) throws SQLException{
         Connection connection = null;
         PreparedStatement ps = null;
 
         try {
             connection = MSSQLConnection.getInstance().createConnection();
-            ps = connection.prepareStatement(" ");
-            //TODO
+            ps = connection.prepareStatement("DELETE FROM " + from +
+                    " WHERE " + whereKey + " = ? " +
+                    extra);
+            ps.setString(1, whereValue);
             ps.execute();
         }
         finally {
@@ -620,6 +622,33 @@ public class Query {
 
                 Object[] row = {user_id, city, district, full_address};
                 dataList.add(row);
+            }
+        }
+        finally {
+            MSSQLConnection.getInstance().close(con, ps, rs);
+        }
+
+        return dataList;
+    }
+
+    public ArrayList<Integer> getDataOfAllProductsIDUser_ForAdmin(String select, String from, String whereK, String whereV) throws SQLException {
+        ArrayList<Integer> dataList = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = MSSQLConnection.getInstance().createConnection();
+            ps = con.prepareStatement("SELECT " + select +
+                    " FROM " + from +
+                    " WHERE " + whereK + " = ?");
+            ps.setString(1, whereV);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int product_id = rs.getInt("product_id");
+
+                dataList.add(product_id);
             }
         }
         finally {

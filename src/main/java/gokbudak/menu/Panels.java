@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Panels {
@@ -96,7 +97,92 @@ public class Panels {
     }
 
     private JPanel adminDeleteUsersPanel() throws SQLException{
-        return null;
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx", "fill"));
+        nestPanel.putClientProperty(FlatClientProperties.STYLE,
+                "arc:20;" +
+                        "[light]background:darken(@background,3%);" +
+                        "[dark]background:lighten(@background,3%)");
+
+        String[] columnNames1 = {"user_id", "İsim", "Soyisim", "Cinsiyet", "TC No"};
+        JScrollPane scrollPane1 = TableManager.getjScrollPane(columnNames1, 5);
+
+        JTextField txtId = new JTextField();
+        JButton button = new JButton("Onayla");
+        txtId.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "user_id gir");
+        txtId.putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true);
+        button.putClientProperty(FlatClientProperties.STYLE,
+                "[light]background:darken(@background, 10%);" +
+                        "[dark]background:lighten(@background, 10%);" +
+                        "borderWidth:0;" +
+                        "focusWidth:0;" +
+                        "innerFocusWidth:0;" +
+                        "foreground:#E0DBDA");
+
+        button.addActionListener(e -> {
+            JLabel label = new JLabel();
+            label.setFont(new Font(FlatRobotoFont.FAMILY, Font.BOLD, 15));
+            boolean isError = true;
+            try {
+                if(!Query.getInstance().isHave("user_id", "users", "user_id", txtId.getText(), "", txtId.getText(), Query.DataType.INTEGER)){
+                    label.setText("Kullanıcı Numarası Bulunamadı");
+                }
+                else if(txtId.getText().equals("13")){
+                    label.setText("ADMIN Silinemez");
+                }
+                else{
+                    ArrayList<Integer> abc = Query.getInstance().getDataOfAllProductsIDUser_ForAdmin("product_id", "orders", "user_id", txtId.getText());
+
+                    for (int id : abc) {
+                        int stock = Integer.parseInt(Query.getInstance().select("stock", "products", "product_id", String.valueOf(id), Query.DataType.INTEGER));
+                        stock += 1;
+                        if (id == 1) {
+                            Query.getInstance().update("products", "stock",
+                                    String.valueOf(stock),
+                                    "product_id", String.valueOf(id), Query.DataType.INTEGER);
+                        } else if (id == 2) {
+                            Query.getInstance().update("products", "stock",
+                                    String.valueOf(stock),
+                                    "product_id", String.valueOf(id), Query.DataType.INTEGER);
+                        } else if (id == 3) {
+                            Query.getInstance().update("products", "stock",
+                                    String.valueOf(stock),
+                                    "product_id", String.valueOf(id), Query.DataType.INTEGER);
+                        }
+                    }
+                    Query.getInstance().delete("loginInfos", "user_id", txtId.getText(), "");
+                    Query.getInstance().delete("addresses", "user_id", txtId.getText(), "");
+                    Query.getInstance().delete("balances", "user_id", txtId.getText(), "");
+                    Query.getInstance().delete("orders", "user_id", txtId.getText(), "");
+                    Query.getInstance().delete("users", "user_id", txtId.getText(), "");
+                    label.setText("Kullanıcı Başarıyla Silindi!");
+                    JOptionPane.showMessageDialog(null, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
+                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
+                    isError = false;
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            if (isError) {
+                JOptionPane.showMessageDialog(null, label, "HATA", JOptionPane.INFORMATION_MESSAGE,
+                        new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/error.png"))));
+            }
+        });
+
+        nestPanel.add(createInfoLabel("Kişi Bilgileri", "4", "#E0DBDA", false));
+        nestPanel.add(scrollPane1, "width 100%");
+        nestPanel.add(new JSeparator(), "gapy 5 5");
+        nestPanel.add(createInfoLabel("Silinecek Kullanıcının Numarasını Girin (user_id)", "4", "#E0DBDA", false));
+        nestPanel.add(createInfoLabel("", "5", "#2ECC71", false), "split 3, gapy 8");
+        nestPanel.add(txtId);
+        nestPanel.add(createInfoLabel("", "5", "#2ECC71", false));
+        nestPanel.add(createInfoLabel("", "5", "#2ECC71", false), "split 3, gapy 8");
+        nestPanel.add(button);
+        nestPanel.add(createInfoLabel("", "5", "#2ECC71", false));
+        panel.add(nestPanel, "width 100%, height 100%");
+        return panel;
     }
 
     private JPanel adminShowWRPanel() throws SQLException{
