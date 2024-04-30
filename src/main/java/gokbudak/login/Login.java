@@ -41,7 +41,7 @@ public class Login extends JPanel{
                 "[dark]background:lighten(@background, 3%)");
 
         txtPassword.putClientProperty(FlatClientProperties.STYLE, "showRevealButton:true");
-        txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Kullanıcı adı veya e-posta");
+        txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Kullanıcı adı");
         txtUsername.putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true);
         txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Şifre");
         txtPassword.putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true);

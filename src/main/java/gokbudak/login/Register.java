@@ -55,7 +55,7 @@ public class Register extends JPanel {
         txtFirstName.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "İsim");
         txtSurName.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Soyisim");
         txtID.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "TC kimlik numarası");
-        txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Kullanıcı adı veya e-posta");
+        txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Kullanıcı adı");
         txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Şifre");
         txtConfirmPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tekrar şifre");
 
