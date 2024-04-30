@@ -491,7 +491,8 @@ public class Query {
                     " ON "  + onLeft + " = " + onRight +
                     " JOIN " + secondJoin +
                     " ON " + secondOnL + " = " + secondOnR +
-                    " WHERE " + whereValue + " = " + whereKey);
+                    " WHERE " + whereValue + " = " + whereKey +
+                    " ORDER BY p.product_id DESC");
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -552,7 +553,7 @@ public class Query {
         try {
             con = MSSQLConnection.getInstance().createConnection();
             ps = con.prepareStatement("SELECT " + select +
-                    " FROM " + from);
+                    " FROM " + from + " ORDER BY user_id ASC");
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -582,7 +583,7 @@ public class Query {
         try {
             con = MSSQLConnection.getInstance().createConnection();
             ps = con.prepareStatement("SELECT " + select +
-                    " FROM " + from);
+                    " FROM " + from + " ORDER BY user_id ASC");
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -611,7 +612,7 @@ public class Query {
         try {
             con = MSSQLConnection.getInstance().createConnection();
             ps = con.prepareStatement("SELECT " + select +
-                    " FROM " + from);
+                    " FROM " + from + " ORDER BY user_id ASC");
             rs = ps.executeQuery();
 
             while (rs.next()) {
