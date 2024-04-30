@@ -174,20 +174,25 @@ public class Register extends JPanel {
         }
         else {
             try {
-                int id = Integer.parseInt(Query.getInstance().select("user_id", "users", "user_id", Query.OrderType.DESC, Query.DataType.INTEGER));
-                id++;
-                String last_id = String.valueOf(id);
+                if (Query.getInstance().isHave("TCNumber", "users", TC, Query.DataType.STRING)){
+                    label.setText("TC Numarası Zaten Kayıtlı");
+                }
+                else {
+                    int id = Integer.parseInt(Query.getInstance().select("user_id", "users", "user_id", Query.OrderType.DESC, Query.DataType.INTEGER));
+                    id++;
+                    String last_id = String.valueOf(id);
 
-                Query.getInstance().insert(last_id, firstName, lastName, gender, TC);
-                Query.getInstance().insert(username, password, TC);
-                Query.getInstance().insert(last_id, last_id);
-                Query.getInstance().insert(last_id, last_id, 0);
+                    Query.getInstance().insert(last_id, firstName, lastName, gender, TC);
+                    Query.getInstance().insert(username, password, TC);
+                    Query.getInstance().insert(last_id, last_id);
+                    Query.getInstance().insert(last_id, last_id, 0);
 
-                label.setText("Giriş Yapabilirsiniz");
-                JOptionPane.showMessageDialog(panel, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
-                        new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
-                FormManager.getInstance().showForm(new Login());
-                isError = false;
+                    label.setText("Giriş Yapabilirsiniz");
+                    JOptionPane.showMessageDialog(panel, label, "BAŞARILI", JOptionPane.INFORMATION_MESSAGE,
+                            new ImageIcon(Objects.requireNonNull(getClass().getResource("/gokbudak/images/success.png"))));
+                    FormManager.getInstance().showForm(new Login());
+                    isError = false;
+                }
             }
             catch (SQLException e) {
                 throw new RuntimeException(e);

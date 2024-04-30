@@ -264,6 +264,7 @@ public class Panels {
                 }
             });
 
+            nestPanel.add(createInfoLabel("Bekleyen Depo İstekleri", "4", "#E0DBDA", false));
             nestPanel.add(scrollPane, "width 100%");
             nestPanel.add(new JSeparator(), "gapy 5 5");
             nestPanel.add(createInfoLabel("Onaylanacak Siparişin Numarasını Girin (order_id)", "4", "#E0DBDA", false));
@@ -341,7 +342,7 @@ public class Panels {
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
-        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45"));
+        JPanel nestPanel = new JPanel(new MigLayout("wrap,fillx,insets 35 45 30 45","fill"));
         nestPanel.putClientProperty(FlatClientProperties.STYLE,
                 "arc:20;" +
                 "[light]background:darken(@background,3%);" +
@@ -354,6 +355,7 @@ public class Panels {
         else {
             String[] columnNames = {"Depo Adı", "Boyut", "Durum", "Satın Alma Tarihi", "Teslim Tarihi"};
             JScrollPane scrollPane = TableManager.getjScrollPane(columnNames, 1);
+            nestPanel.add(createInfoLabel("Depolarım", "4", "#E0DBDA", false));
             nestPanel.add(scrollPane, "width 100%");
             panel.add(nestPanel, "width 100%, height 100%");
         }

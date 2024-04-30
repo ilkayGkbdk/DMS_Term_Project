@@ -77,11 +77,10 @@ public class AdminMenu extends BlurChild {
                 new Item("Üyeler", "email.svg")
                         .subMenu("Üyeleri Gör")
                         .subMenu("Üyeleri Sil"),
-                new Item("Ciro", "logout.svg"),
                 new Item.Label("ÜRÜNLER"),
                 new Item("Depolar", "ui.svg")
                         .subMenu("Depoları Görüntüle")
-                        .subMenu("Depo Onayları"),
+                        .subMenu("Bekleyen İstekler"),
                 new Item.Label("DİĞER"),
                 new Item("ÇIKIŞ", "logout.svg")
         };
@@ -104,18 +103,9 @@ public class AdminMenu extends BlurChild {
 
                     if (ints.length == 1){
                         int index = ints[0];
-
-                        if (index == 1){
-                            try {
-                                FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.BALANCE));
-                            } catch (PropertyVetoException | SQLException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        else if (index == 3){
+                         if (index == 2){
                             FormManager.getInstance().showForm(new Login());
                         }
-
                     }
                     else if (ints.length == 2){
                         int index = ints[0];
@@ -137,7 +127,7 @@ public class AdminMenu extends BlurChild {
                                 }
                             }
                         }
-                        else if (index == 2){
+                        else if (index == 1){
                             if(subIndex == 0){
                                 try {
                                     FormManager.getInstance().showForm("", Panels.getInstance().getPanel(Panels.SystemPanel.ADMIN_SHOW_WR));
