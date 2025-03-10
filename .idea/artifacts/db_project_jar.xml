@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="db_project:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/db_project_jar</output-path>
+    <root id="archive" name="db_project.jar">
+      <element id="module-output" name="db_project" />
+      <element id="module-test-output" name="db_project" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/miglayout/miglayout-core/11.3/miglayout-core-11.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf-extras/3.4.1/flatlaf-extras-3.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/weisj/jsvg/1.4.0/jsvg-1.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/mssql-jdbc-12.6.1.jre11.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/twelvemonkeys/common/common-image/3.10.1/common-image-3.10.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/library/swing-glasspane-popup-1.5.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf-fonts-roboto/2.137/flatlaf-fonts-roboto-2.137.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf/3.4.1/flatlaf-3.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/twelvemonkeys/common/common-lang/3.10.1/common-lang-3.10.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/twelvemonkeys/common/common-io/3.10.1/common-io-3.10.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/miglayout/miglayout-swing/11.3/miglayout-swing-11.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/library/swing-blur-background-1.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
