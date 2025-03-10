@@ -96,7 +96,3 @@ Katkıda bulunmak isterseniz, lütfen bir "pull request" gönderin veya "issue" 
 ## Lisans
 
 Bu proje MIT lisansı altında lisanslanmıştır.
-
-## İletişim
-
-Sorularınız veya önerileriniz için \[e-posta adresiniz] ile iletişime geçebilirsiniz.
