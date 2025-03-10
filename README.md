@@ -53,7 +53,7 @@ Bu proje, Java Swing kullanılarak geliştirilmiş, kullanıcıların depo alım
 
     Uygulama giriş ekranı:
 
-    ![Giriş Ekranı](images/giris_ekrani.png)
+    ![Giriş Ekranı](images/giris_sayfasi.png)
 
 ## Kullanım
 
@@ -63,7 +63,7 @@ Bu proje, Java Swing kullanılarak geliştirilmiş, kullanıcıların depo alım
 
     Kullanıcı arayüzü aşağıdaki gibidir:
 
-    ![Kullanıcı Arayüzü](images/kullanici_arayuzu.png)
+    ![Kullanıcı Arayüzü](images/kullanici_arayuz.png)
 
     Kullanıcılar bu arayüz üzerinden depo satın alabilir ve bakiyelerini yönetebilirler.
 
@@ -73,19 +73,19 @@ Yönetici paneli aşağıdaki özelliklere sahiptir:
 
 ### Üyeleri Görüntüleme
 
-![Üyeleri Görüntüleme](images/admin_uyeler.png)
+![Üyeleri Görüntüleme](images/admin_uye_goruntule.png)
 
 Yöneticiler bu ekran üzerinden kullanıcıları görüntüleyebilirler.
 
 ### Bekleyen Depo İstekleri
 
-![Bekleyen Depo İstekleri](images/admin_istekler.png)
+![Bekleyen Depo İstekleri](images/admin_depo_istekleri.png)
 
 Yöneticiler bu ekran üzerinden bekleyen depo isteklerini onaylayabilir veya reddedebilirler.
 
 ### Depoları Görüntüleme
 
-![Depoları Görüntüleme](images/admin_depolar.png)
+![Depoları Görüntüleme](images/admin_depolari_listele.png)
 
 Yöneticiler bu ekran üzerinden depoları görüntüleyebilirler.
 
